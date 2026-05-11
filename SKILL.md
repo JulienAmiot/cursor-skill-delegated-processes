@@ -1,6 +1,6 @@
 ---
 name: delegated-processes
-description: Facilitate a recurring team meeting using Alain Cardon's Systemic Delegated Processes. Assigns rotating systemic roles (Facilitator, Decision Driver, Pacer, Process Coach, plus optional Host / Technician / Scribe) to attendees with fair circulation across meetings, generates a per-attendee briefing card so each person knows what to do, and produces minutes (decisions, pilots, deadlines) that update the rotation log. Use when the user asks to facilitate, prepare, or run a team meeting; mentions delegated roles, role rotation, systemic team coaching, Alain Cardon, Metasysteme; or wants meeting minutes that track who held which role.
+description: Facilitate a recurring team meeting using Alain Cardon's Systemic Delegated Processes. Assigns rotating systemic roles (Facilitator, Decision Driver, Pacer, Process Coach, plus optional Host / Technician / Scribe) to attendees with fair circulation across meetings, generates a per-attendee briefing card so each person knows what to do, and produces minutes (decisions, pilots, deadlines) that update the rotation log. Use when the user asks to facilitate, prepare, or run a team meeting; mentions delegated roles, role rotation, systemic team coaching, Alain Cardon, Metasysteme; wants meeting minutes that track who held which role; or runs a Scrum / agile ceremony (retro, planning, review, refinement) with rotating facilitation.
 ---
 
 # Systemic Delegated Processes — Meeting Facilitation Skill
@@ -79,6 +79,20 @@ Look for `roster.md` in the working directory (or a path the user gives you). If
 - Decision-maker (excluded from rotation).
 - Attendees (5–15 people).
 - Whether optional roles (Host / Technician / Scribe) are in play for this team.
+
+#### Scrum / agile mapping (ask once, store in roster)
+
+If the meeting is a Scrum ceremony (retro, planning, review, refinement) — or any agile context where no single person is "the boss" — Cardon's "exclude the decision-maker from rotation" rule needs an explicit mapping. **Ask the user once**, then write the answer to `roster.md` under a `## Scrum mapping` heading so future runs do not re-ask.
+
+Three options to offer:
+
+1. **Product Owner as decision-maker** — PO is excluded from rotation; Scrum Master and engineers rotate. Closest to Cardon's original framing because the PO validates which improvement actions get prioritised against shipping work.
+2. **PO not attending this ceremony** — no one excluded; all attendees rotate. The most common reality for retros.
+3. **Fully self-organising** — no one excluded; PO + Scrum Master + engineers all rotate. Use only when the team has explicitly agreed to this in their working agreement.
+
+**Refuse to map the Scrum Master to the decision-maker slot.** The SM is a facilitator / coach, not an authority who validates decisions; excluding them from rotation contradicts both Scrum and Cardon.
+
+For non-Scrum agile flavours (Kanban, LeSS, SAFe, etc.) adapt the same question to that team's role names. Record the answer in `roster.md` either way so the choice is visible and revisitable.
 
 ### Step 2 — Locate or create the rotation log
 

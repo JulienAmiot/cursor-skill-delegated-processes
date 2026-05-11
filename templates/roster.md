@@ -13,6 +13,16 @@
 
 - <Name> — <title>
 
+## Scrum mapping (only if this is a Scrum / agile ceremony)
+
+Tick exactly one. Asked once on first run, then read on every subsequent run.
+
+- [ ] **Product Owner as decision-maker** — PO excluded from rotation; SM + engineers rotate.
+- [ ] **PO not attending this ceremony** — no one excluded; all attendees rotate.
+- [ ] **Fully self-organising** — no one excluded; PO + SM + engineers all rotate.
+
+> Never map the Scrum Master to the decision-maker slot — the SM is a facilitator / coach, not an authority.
+
 ## Rotating attendees
 
 5–15 people. The skill will rotate the four core roles across this list.
