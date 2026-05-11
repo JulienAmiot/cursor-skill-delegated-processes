@@ -121,9 +121,9 @@ Sort results by date, descending.
 ### Step 6 — Confirm attendees
 
 - **With history:** present the union of attendees seen across the most recent 3–5 prior sessions. Ask: "Same attendees as last time? (Y / list changes)". Apply the changes.
-- **Cold start:** ask for attendees once, free-text. Format expected: one per line, `Name — Function`.
+- **Cold start:** ask for attendees once, free-text. Format expected: **one name per line, names only**. Do not ask for or record team roles / titles / functions — they bias the systemic role assignment and are not relevant to it.
 
-If a Scrum mapping was recorded earlier, surface it now and ask the user to confirm or override before role assignment.
+If a Scrum mapping was recorded earlier and it requires identifying a specific person (e.g. "PO as decision-maker"), ask that as a single targeted question after the attendee list is in — e.g. "Who is the PO?". Do not ask everyone for their team role.
 
 ### Step 7 — Compute + propose role rotation
 
@@ -134,7 +134,7 @@ Apply Cardon's circulation principle using the role history extracted in Step 5:
 3. Break ties by lowest total core-role count.
 4. The decision-maker (if recorded) is never assigned a rotating role.
 5. For optional roles (only if the operator activated any), apply the same logic with their own counts.
-6. **Cold start:** with no history, optimise the first assignment for *framing* — give the highest-authority person the lowest-authority rotating role (Pacer) to model that rotation is genuine.
+6. **Cold start:** with no history and no team-role information, the first assignment is arbitrary by design. Map attendees to roles in the order the operator listed them: 1st → Facilitator, 2nd → Decision Driver, 3rd → Pacer, 4th → Process Coach. Tell the operator it is arbitrary and invite swaps. From session 2 onwards the rotation algorithm has real history to work with.
 
 Show the proposal as a small table and ask: "Approve rotation?". Wait for `Y` or a swap instruction.
 
@@ -187,3 +187,4 @@ Then call `updateConfluencePage` to fill the **Decisions** and **Process notes**
 - Assigning the same person the same role two sessions in a row without explicit operator override.
 - Writing decisions without a single pilot or without a dated deadline.
 - Batching multiple questions in one turn during the operator interview.
+- Asking attendees for their team role / title / function. The systemic role rotation is peer-to-peer; team role information biases the assignment and must not be collected.
