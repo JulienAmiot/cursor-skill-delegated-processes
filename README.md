@@ -120,12 +120,16 @@ The skill follows a strict one-question-at-a-time interview:
 3. Asks the parent page (where session pages should live).
 4. Asks the session name.
 5. CQL-searches the space for prior sessions tagged with `cursor-skill-delegated-process` and with a similar title; if found, infers the canonical title pattern, attendee list, and role history.
-6. Asks you to confirm attendees (with diff against history if available).
+6. Asks you to confirm attendees (with diff against history if available). Accepts comma-separated, whitespace-separated, or one-per-line input — names only, never team roles. Resolves every name to an Atlassian `accountId` (via prior sessions in the space first, then `lookupJiraAccountId`, with a single fallback prompt if needed) so each attendee is rendered as a real Confluence `@mention` on the page, not plain text.
 7. Proposes role rotation (computed from history) and asks you to approve.
-8. Creates the new Confluence page with attribution header, roles table, briefings, and empty decision / process-notes sections.
+8. Creates the new Confluence page with attribution header, roles table (every assignee as a Confluence `@mention`), briefings, and empty decision / process-notes sections.
 9. After the meeting, updates the same page with decisions (one pilot, dated deadline, measure) and the Process Coach's notes.
 
 The conversation is intentionally minimalist: one prompt per turn, no preamble, no narration.
+
+### A note on Scrum / agile teams
+
+On Scrum, Kanban, LeSS, SAFe, or any team that operates without a single hierarchical "boss", **every attendee rotates equally**. The skill never offers to exclude the Product Owner, the Scrum Master, the Tech Lead, the Product Manager, or anyone else by virtue of their team role, and never asks attendees to disclose their team role. Cardon's "decision-maker excluded from rotation" rule is reserved for explicitly hierarchical teams (executive committees, manager + direct reports), and only when the operator explicitly opts in.
 
 ## Scope (and what it explicitly won't do)
 

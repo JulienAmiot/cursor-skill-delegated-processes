@@ -35,7 +35,9 @@ Do **not** use for: crisis or one-off meetings with strangers, podium / informat
 
 ## The roles
 
-Four core rotating roles: **Facilitator**, **Decision Driver**, **Pacer**, **Process Coach**. Three optional roles activated only when context warrants: **Host** (rotating locations), **Technician** (complex AV), **Scribe** (Facilitator can't write on the board). The decision-maker is excluded from rotation; for Scrum / self-managing teams see the Scrum mapping section in Step 3 below.
+Four core rotating roles: **Facilitator**, **Decision Driver**, **Pacer**, **Process Coach**. Three optional roles activated only when context warrants: **Host** (rotating locations), **Technician** (complex AV), **Scribe** (Facilitator can't write on the board).
+
+In Cardon's original framework, a single hierarchical decision-maker (the boss of an executive committee, a manager + direct reports, etc.) is excluded from rotation. **In Scrum, Kanban, LeSS, SAFe, or any other self-managing / agile team, no one is excluded from rotation by virtue of their team role** — see the dedicated subsection in Step 3 below.
 
 For per-role detail (mission, before / during / avoid / hand-off), read [`roles.md`](roles.md). It is the source for every briefing card written into the Confluence page.
 
@@ -131,15 +133,13 @@ Call `getAccessibleAtlassianResources` to discover the `cloudId`. If multiple si
 
 Ask: "Which page should new session pages live under? (paste the URL or page ID)". Resolve to a `parentId` via `getConfluencePage`.
 
-#### Scrum / agile mapping (ask once per team, recorded on the first page)
+#### Self-managing / agile teams — no role-based exclusion
 
-If the meeting is a Scrum ceremony or any agile context with no clear "boss", ask once:
+For Scrum, Kanban, LeSS, SAFe, or any team that operates without a single hierarchical "boss", **every attendee rotates equally — no exclusion by team role, no question asked**. Do not offer to exclude the Product Owner, the Scrum Master, the Tech Lead, the Product Manager, the Engineering Manager, or anyone else as the "decision-maker". Refuse to map the Scrum Master to the decision-maker slot.
 
-1. **Product Owner as decision-maker** — PO is excluded from rotation; SM + engineers rotate.
-2. **PO not attending this ceremony** — no one excluded; all attendees rotate.
-3. **Fully self-organising** — no one excluded; PO + SM + engineers all rotate.
+Cardon's original "decision-maker excluded from rotation" rule applies only when the team is **explicitly hierarchical** (executive committee with a CEO, a manager + their direct reports, etc.). Use it only when the operator explicitly opts in by naming the decision-maker. Never derive exclusion from a job title or a team-role label.
 
-Record the answer in the session page (under `## Scrum mapping`). On subsequent runs, read the most recent prior session and reuse the recorded mapping unless the user overrides. **Refuse to map the Scrum Master to the decision-maker slot** — the SM is a facilitator / coach, not an authority.
+Render the corresponding line on the page as `_Decision-maker (excluded from rotation):_ —` whenever no one is explicitly excluded (the agile / self-managing default).
 
 ### Step 4 — Session name + retro detection
 
@@ -171,10 +171,20 @@ Sort results by date, descending.
 
 ### Step 6 — Confirm attendees
 
-- **With history:** present the union of attendees seen across the most recent 3–5 prior sessions. Ask: "Same attendees as last time? (Y / list changes)". Apply the changes.
-- **Cold start:** ask for attendees once, free-text. Format expected: **one name per line, names only**. Do not ask for or record team roles / titles / functions — they bias the systemic role assignment and are not relevant to it.
+- **With history:** present the union of attendees seen across the most recent 3–5 prior sessions (read each prior page and extract the @mention spans from its roles table — that gives you names *and* their resolved accountIds). Ask: "Same attendees as last time? (Y / list changes)". Apply the changes.
+- **Cold start or new attendees:** ask once, free-text. **Accept the list in any of these forms — comma-separated, whitespace-separated, or one name per line.** Parse by splitting on `[,\s]+` and trimming each token. Names only — never ask for team roles / titles / functions.
 
-If a Scrum mapping was recorded earlier and it requires identifying a specific person (e.g. "PO as decision-maker"), ask that as a single targeted question after the attendee list is in — e.g. "Who is the PO?". Do not ask everyone for their team role.
+#### Resolve every attendee to an Atlassian @mention
+
+Plain-text names in the page are an anti-pattern: they don't notify the person, don't link to a profile, and the next session can't reuse them. For every parsed name, resolve to an `accountId` in this order:
+
+1. **Prior sessions in the same space.** If any prior delegated-processes page in the space mentions this name, reuse the `accountId` stored in that page's `<span data-type="mention" data-user-id="...">@Name</span>` element.
+2. **Atlassian directory lookup.** Call `lookupJiraAccountId` with the parsed name as `searchString` (Confluence and Jira share the same user directory, so a Jira lookup resolves Confluence users too). If exactly one user matches, take it. If several match, present the candidates and ask the operator which one in a single terse prompt — never silently guess.
+3. **Operator fallback.** If no candidate is returned, ask the operator once for the `@handle`, the user profile URL, or the `accountId` of the unresolved attendee. Cache every resolution in this session's roster so you only ask once per name.
+
+Render every attendee reference in the Confluence page (roles table, briefings, decisions, process notes, rotation context, check-in log, "other attendees" line) as `<span data-type="mention" data-user-id="ACCOUNT_ID">@Name</span>`. The plain name is fine in chat with the operator; it is **never** acceptable in the rendered page.
+
+If the team is explicitly hierarchical and the operator opted into "decision-maker excluded" in Step 3, ask once after the list is in — "Who is the decision-maker?" — and resolve them with the same procedure. Skip this question for any Scrum / agile / self-managing team.
 
 ### Step 7 — Compute + propose role rotation
 
@@ -183,7 +193,7 @@ Apply Cardon's circulation principle using the role history extracted in Step 5:
 1. For each core role, count how many times each attendee has held it across prior sessions.
 2. For each role, pick the attendee who has held it the **fewest** times AND, where possible, did **not** hold any core role in the **most recent** prior session (avoid back-to-back).
 3. Break ties by lowest total core-role count.
-4. The decision-maker (if recorded) is never assigned a rotating role.
+4. The decision-maker is excluded from rotating roles **only if** the operator explicitly named one in Step 3 for an explicitly hierarchical team. On Scrum / agile / self-managing teams there is no such exclusion.
 5. For optional roles (only if the operator activated any), apply the same logic with their own counts.
 6. **Cold start:** with no history and no team-role information, the first assignment is arbitrary by design. Map attendees to roles in the order the operator listed them: 1st → Facilitator, 2nd → Decision Driver, 3rd → Pacer, 4th → Process Coach. Tell the operator it is arbitrary and invite swaps. From session 2 onwards the rotation algorithm has real history to work with.
 
@@ -199,9 +209,8 @@ Use `createConfluencePage` with:
 - `contentFormat` = `html`
 - `body` = HTML rendered from the canonical structure in [`confluence-page.html`](confluence-page.html), populated with:
   - The attribution panel — Cardon + McCarthy + skill marker; **add the Derby & Larsen paragraph if retro mode is on**
-  - The Scrum mapping (if applicable)
-  - The roles + assignees table
-  - One briefing section per role-holder, content drawn from [`roles.md`](roles.md)
+  - The roles + assignees table — **every assignee rendered as a Confluence @mention span**, not plain text
+  - One briefing section per role-holder, content drawn from [`roles.md`](roles.md), with the role-holder's name in the heading also rendered as a @mention
   - **The 5-stage agenda block — only if retro mode is on** (see [`retrospective-stages.md`](retrospective-stages.md) for stage-by-stage role + protocol mapping and time-budget guidance)
   - Empty decisions table and process-notes section
   - A short "rotation context" block citing how many prior sessions were found and linking to the most recent
@@ -236,7 +245,11 @@ Then call `updateConfluencePage` to fill the **Decisions** and **Process notes**
 - Falling back to local files when the Confluence MCP is unavailable.
 - Creating a page without the skill marker in the header.
 - Mapping the Scrum Master to the decision-maker slot.
+- Excluding **any** attendee from rotation by virtue of their team role on a Scrum / agile / self-managing team. Such teams rotate everyone equally; offer no opt-out per role.
 - Assigning the same person the same role two sessions in a row without explicit operator override.
 - Writing decisions without a single pilot or without a dated deadline.
 - Batching multiple questions in one turn during the operator interview.
 - Asking attendees for their team role / title / function. The systemic role rotation is peer-to-peer; team role information biases the assignment and must not be collected.
+- Rejecting an attendee list because of its formatting. Comma-separated, whitespace-separated, and one-per-line are all valid — parse and resolve, do not push the work back to the operator.
+- Rendering attendee names as plain text on the Confluence page. Always use the `<span data-type="mention" data-user-id="...">@Name</span>` element so the person is notified and properly linked, and so the next session can parse the page back into a roster.
+- Silently picking one user when `lookupJiraAccountId` returns multiple matches for a name. Always show the candidates and let the operator pick.

@@ -4,8 +4,13 @@
   Rules for the agent populating this template:
   - Render with createConfluencePage / updateConfluencePage using contentFormat="html".
   - Replace every {{placeholder}} with real content.
-  - The 3-line attribution panel and the skill marker MUST stay verbatim — they
-    are how the next session finds this page via CQL.
+  - The attribution panel and the skill marker MUST stay verbatim — they are
+    how the next session finds this page via CQL.
+  - Every `{{*_mention}}` placeholder MUST be replaced with a Confluence mention
+    span of the form:
+        <span data-type="mention" data-user-id="ACCOUNT_ID">@Name</span>
+    Plain-text names are NOT acceptable in this template. They break attendee
+    notification, profile linking, and history parsing for the next session.
   - The "Roles" table MUST keep two columns (Role | Person) and the four core
     role names exactly as written, so the next session can parse role history.
   - Sections may be empty at create time (Decisions, Process notes); fill on
@@ -27,29 +32,26 @@
 
 <h1>{{session_title}} — {{session_date_iso}}</h1>
 
-<h2>Scrum mapping</h2>
-<p>{{scrum_mapping_choice_or_dash}}</p>
-
 <h2>Attendees and roles</h2>
 <table>
   <thead>
     <tr><th>Role</th><th>Person</th></tr>
   </thead>
   <tbody>
-    <tr><td>Facilitator</td><td>{{facilitator_name}}</td></tr>
-    <tr><td>Decision Driver</td><td>{{decision_driver_name}}</td></tr>
-    <tr><td>Pacer</td><td>{{pacer_name}}</td></tr>
-    <tr><td>Process Coach</td><td>{{process_coach_name}}</td></tr>
+    <tr><td>Facilitator</td><td>{{facilitator_mention}}</td></tr>
+    <tr><td>Decision Driver</td><td>{{decision_driver_mention}}</td></tr>
+    <tr><td>Pacer</td><td>{{pacer_mention}}</td></tr>
+    <tr><td>Process Coach</td><td>{{process_coach_mention}}</td></tr>
     <!-- Optional roles appear only if activated for this team. Keep the row
          omitted (not blank) when not active so the parser ignores them. -->
-    <tr><td>Host</td><td>{{host_name_or_omit_row}}</td></tr>
-    <tr><td>Technician</td><td>{{technician_name_or_omit_row}}</td></tr>
-    <tr><td>Scribe</td><td>{{scribe_name_or_omit_row}}</td></tr>
+    <tr><td>Host</td><td>{{host_mention_or_omit_row}}</td></tr>
+    <tr><td>Technician</td><td>{{technician_mention_or_omit_row}}</td></tr>
+    <tr><td>Scribe</td><td>{{scribe_mention_or_omit_row}}</td></tr>
   </tbody>
 </table>
 
-<p><em>Decision-maker (excluded from rotation):</em> {{decision_maker_name_or_dash}}</p>
-<p><em>Other attendees (no process role this session):</em> {{other_attendees_or_dash}}</p>
+<p><em>Decision-maker (excluded from rotation):</em> {{decision_maker_mention_or_dash}}</p>
+<p><em>Other attendees (no process role this session):</em> {{other_attendees_mentions_or_dash}}</p>
 
 <h2>Rotation context</h2>
 <ul>
@@ -60,7 +62,7 @@
 
 <h2>Briefings</h2>
 
-<h3>Facilitator — {{facilitator_name}}</h3>
+<h3>Facilitator — {{facilitator_mention}}</h3>
 <p><strong>Mission.</strong> {{facilitator_mission}}</p>
 <p><strong>Before.</strong></p>
 <ul>{{facilitator_before_list_items}}</ul>
@@ -70,7 +72,7 @@
 <ul>{{facilitator_avoid_list_items}}</ul>
 <p><strong>At the end.</strong> {{facilitator_handoff}}</p>
 
-<h3>Decision Driver — {{decision_driver_name}}</h3>
+<h3>Decision Driver — {{decision_driver_mention}}</h3>
 <p><strong>Mission.</strong> {{decision_driver_mission}}</p>
 <p><strong>Before.</strong></p>
 <ul>{{decision_driver_before_list_items}}</ul>
@@ -80,7 +82,7 @@
 <ul>{{decision_driver_avoid_list_items}}</ul>
 <p><strong>At the end.</strong> {{decision_driver_handoff}}</p>
 
-<h3>Pacer — {{pacer_name}}</h3>
+<h3>Pacer — {{pacer_mention}}</h3>
 <p><strong>Mission.</strong> {{pacer_mission}}</p>
 <p><strong>Before.</strong></p>
 <ul>{{pacer_before_list_items}}</ul>
@@ -90,7 +92,7 @@
 <ul>{{pacer_avoid_list_items}}</ul>
 <p><strong>At the end.</strong> {{pacer_handoff}}</p>
 
-<h3>Process Coach — {{process_coach_name}}</h3>
+<h3>Process Coach — {{process_coach_mention}}</h3>
 <p><strong>Mission.</strong> {{process_coach_mission}}</p>
 <p><strong>Before.</strong></p>
 <ul>{{process_coach_before_list_items}}</ul>
