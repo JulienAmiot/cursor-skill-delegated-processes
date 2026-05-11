@@ -93,12 +93,12 @@ If any of these is missing, say so up front and refuse to proceed rather than fa
 ```
 - [ ] 1. Open with attribution (3 lines verbatim)
 - [ ] 2. Discover cloudId + ask space
-- [ ] 3. Ask parent page (root for sessions)
+- [ ] 3. Ask parent location (page OR folder)
 - [ ] 4. Ask session name
-- [ ] 5. Search for prior sessions; infer canonical title + attendee history
+- [ ] 5. Search for prior sessions (pages) AND linked whiteboards; infer canonical title + attendee history
 - [ ] 6. Confirm attendees for this session
 - [ ] 7. Compute + propose role rotation
-- [ ] 8. Confirm rotation; create the page
+- [ ] 8. Confirm rotation; create the page (link parent + working-surface whiteboard)
 - [ ] 9. After the meeting: update the page with decisions + process notes
 ```
 
@@ -129,9 +129,26 @@ The Cardon and McCarthy blocks are required on every session even if no protocol
 
 Call `getAccessibleAtlassianResources` to discover the `cloudId`. If multiple sites are accessible, ask the user which one. Then call `getConfluenceSpaces` and ask the user which space (one prompt: "Which Confluence space?"). Store the chosen space ID and key for the rest of the session.
 
-### Step 3 — Parent page (root for session pages)
+### Step 3 — Parent location (page **or** folder)
 
-Ask: "Which page should new session pages live under? (paste the URL or page ID)". Resolve to a `parentId` via `getConfluencePage`.
+Ask: "Which page or folder should new session pages live under? (paste the URL or ID — both pages and folders work)". Resolve to a `parentId`:
+
+- **Page** (URL contains `/pages/<id>/...`) — confirm with `getConfluencePage`.
+- **Folder** (URL contains `/folder/<id>...`) — the MCP wrapper returns 404 on `getConfluencePage` for folder ids, so confirm via CQL `space = "{KEY}" AND parent = "<id>"` (any non-empty result proves the folder exists and is reachable). Inspect its current children with the same query to make sure it's the right hub.
+
+If the operator asks for help finding the parent, do **not** dump every page in the space. Run a focused CQL search across **both pages and folders** for ritual / ceremony hub names — for example:
+
+```
+space = "{SPACE_KEY}" AND (type = page OR type = folder) AND (title ~ "ritual" OR title ~ "ceremon" OR title ~ "iteration" OR title ~ "sprint" OR title ~ "retro" OR title ~ "meeting" OR title ~ "agile")
+```
+
+Present at most the top 3–5 candidates, **folders first** (folders are almost always the right ritual hub on modern Confluence — Confluence rolled out folders specifically as durable ceremony / topic containers, separate from regular pages). Show one line per candidate with `[type] title (id) — created by …`, then ask the operator to pick or paste another.
+
+`createConfluencePage` accepts folder IDs as `parentId` (Confluence v2 REST API supports this; the MCP wrapper passes the value through unchanged). If Confluence rejects the id at create time, fall back to the space home and tell the operator once.
+
+Whiteboards are **never** used as a `parentId` — they cannot host page descendants. Whiteboards are linked working surfaces, see Step 5.
+
+Record both the resolved `parentId` and its `parentType` (`page` or `folder`); both are rendered into the new session page in Step 8.
 
 #### Self-managing / agile teams — no role-based exclusion
 
@@ -167,7 +184,23 @@ Sort results by date, descending.
   - The **canonical title pattern** (e.g. "Campaign Retro — YYYY-MM-DD") — propose this format to the user with one prompt: "Past sessions use the title pattern `{pattern}`. Use the same?".
   - The **attendees** from each page's roles table.
   - The **role history** (who held which role on each prior page).
-- **If 0 results:** cold start. The session name becomes the canonical title prefix. Tell the user "No prior sessions found — cold start." and move on.
+- **If 0 results:** cold start *for this skill*. Before declaring full cold start, also run a parent-scoped CQL search to detect a **pre-existing title pattern from prior, non-skill sessions**:
+
+```
+space = "{SPACE_KEY}" AND parent = "{PARENT_ID}" AND title ~ "{session intent}"
+```
+
+If a strong prior pattern emerges (e.g. `YYYYMMDDHHMM Retrospective`), propose it to the operator with one prompt: "Past sessions in this folder use the pattern `{pattern}`. Reuse it?". This keeps the new skill-managed page consistent with the team's existing archive even though the prior pages don't carry the skill marker.
+
+#### Whiteboard discovery (linked working surface)
+
+In modern Confluence, teams often run a recurring meeting from a **paired whiteboard** (sticky notes for *gather data* and *generate insights*) and write the minutes on a separate page. After the prior-session search, also search for whiteboards in the same space whose title matches the session intent:
+
+```
+space = "{SPACE_KEY}" AND type = whiteboard AND title ~ "{session name}"
+```
+
+Sort by date descending. The most recent matching whiteboard (created in the same week as today, or the single most recent if there is a clear cadence) is a candidate **working surface** — link it from the new session page in Step 8 (it is never the parent). Always present the candidate to the operator with one prompt: "Use whiteboard `{title}` as the working surface? (Y / paste another / N for none)". If none is found, leave the linked-artifacts whiteboard slot empty rather than fabricating one.
 
 ### Step 6 — Confirm attendees
 
@@ -214,6 +247,7 @@ Use `createConfluencePage` with:
   - **The 5-stage agenda block — only if retro mode is on** (see [`retrospective-stages.md`](retrospective-stages.md) for stage-by-stage role + protocol mapping and time-budget guidance)
   - Empty decisions table and process-notes section
   - A short "rotation context" block citing how many prior sessions were found and linking to the most recent
+  - A "Linked Confluence artifacts" section listing the parent (with `page` or `folder` type) and the matched whiteboard from Step 5 (or `—` if none)
 
 Confluence labels are not exposed by the MCP `createConfluencePage` tool — the **skill marker** (`cursor-skill-delegated-process`) is therefore embedded in the page header text so CQL `text ~ "cursor-skill-delegated-process"` finds it. **Do not omit the marker.** Without it the next session will not find this page.
 
@@ -253,3 +287,6 @@ Then call `updateConfluencePage` to fill the **Decisions** and **Process notes**
 - Rejecting an attendee list because of its formatting. Comma-separated, whitespace-separated, and one-per-line are all valid — parse and resolve, do not push the work back to the operator.
 - Rendering attendee names as plain text on the Confluence page. Always use the `<span data-type="mention" data-user-id="...">@Name</span>` element so the person is notified and properly linked, and so the next session can parse the page back into a roster.
 - Silently picking one user when `lookupJiraAccountId` returns multiple matches for a name. Always show the candidates and let the operator pick.
+- Using a whiteboard ID as `parentId` for `createConfluencePage`. Whiteboards cannot host pages — they are linked artifacts on the session page, never the parent.
+- Restricting the parent search to `type = page`. Folders are first-class containers in modern Confluence and are usually the right ritual hub; always include `type = folder` in parent-discovery CQL and surface folders first in the candidate list.
+- Listing every page in the space when asked to help with the parent. Search for ritual / ceremony hub names across pages **and** folders, present the top few, folders first.

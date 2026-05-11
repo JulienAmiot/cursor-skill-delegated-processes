@@ -117,9 +117,9 @@ The skill follows a strict one-question-at-a-time interview:
 
 1. Opens with the 3-line attribution.
 2. Discovers the Atlassian cloudId, asks which space.
-3. Asks the parent page (where session pages should live).
+3. Asks the parent location — accepts both pages **and folders** (modern Confluence folders are first-class containers and usually the right ritual hub). Surfaces folder candidates first when you ask for help.
 4. Asks the session name.
-5. CQL-searches the space for prior sessions tagged with `cursor-skill-delegated-process` and with a similar title; if found, infers the canonical title pattern, attendee list, and role history.
+5. CQL-searches the space for prior sessions tagged with `cursor-skill-delegated-process` and with a similar title; if found, infers the canonical title pattern, attendee list, and role history. Also searches for matching **whiteboards** in the same space (Confluence whiteboards are commonly used as the working surface for retros, paired with a minutes page) and offers the most recent one as a linked working surface.
 6. Asks you to confirm attendees (with diff against history if available). Accepts comma-separated, whitespace-separated, or one-per-line input — names only, never team roles. Resolves every name to an Atlassian `accountId` (via prior sessions in the space first, then `lookupJiraAccountId`, with a single fallback prompt if needed) so each attendee is rendered as a real Confluence `@mention` on the page, not plain text.
 7. Proposes role rotation (computed from history) and asks you to approve.
 8. Creates the new Confluence page with attribution header, roles table (every assignee as a Confluence `@mention`), briefings, and empty decision / process-notes sections.
