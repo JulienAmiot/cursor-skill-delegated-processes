@@ -1,15 +1,19 @@
 ---
 name: delegated-processes
-description: Facilitate a recurring team meeting on Confluence using Alain Cardon's Systemic Team Coaching Delegated Processes. Connects to the Atlassian / Confluence MCP, discovers prior sessions in a chosen space by tag and similar title, infers attendees and role history from those pages, proposes a fair role rotation (Facilitator, Decision Driver, Pacer, Process Coach, plus optional Host / Technician / Scribe), and creates a new timestamped Confluence page tagged with the skill marker. Use when the user asks to facilitate, prepare, or run a team meeting; mentions delegated roles, role rotation, systemic team coaching, Alain Cardon, Metasysteme; runs a Scrum / agile ceremony with rotating facilitation; or wants meeting minutes that track who held which role across sessions.
+description: Facilitate a recurring team meeting on Confluence using Alain Cardon's Systemic Team Coaching Delegated Processes (rotating roles) layered with Jim and Michele McCarthy's Core Protocols (in-meeting behaviors). Connects to the Atlassian / Confluence MCP, discovers prior sessions in a chosen space by tag and similar title, infers attendees and role history, proposes a fair role rotation (Facilitator, Decision Driver, Pacer, Process Coach, plus optional Host / Technician / Scribe), points each role-holder at the Core Protocols they can lean on (Check In, Decider, Resolution, Perfection Game, Pass, Protocol Check, Intention Check, Ask For Help, Check Out), and creates a new timestamped Confluence page tagged with the skill marker. Use when the user asks to facilitate, prepare, or run a team meeting; mentions delegated roles, role rotation, systemic team coaching, Alain Cardon, Metasysteme; mentions the Core Protocols, Software For Your Head, McCarthy, Decider, Check In, Perfection Game; runs a Scrum / agile ceremony with rotating facilitation; or wants meeting minutes that track who held which role across sessions.
 ---
 
-# Systemic Delegated Processes — Confluence-driven facilitation
+# Systemic Delegated Processes + Core Protocols — Confluence-driven facilitation
 
-> **Format.** Systemic Team Coaching Delegated Processes — by **Alain Cardon, MCC**.
+> **Format (structure / roles).** Systemic Team Coaching Delegated Processes — by **Alain Cardon, MCC**.
 > **Source.** <https://www.metasysteme-coaching.eu/english/systemic-team-coaching-delegated-processes/>
-> **Skill marker (used as Confluence tag and CQL search anchor).** `cursor-skill-delegated-process`
+>
+> **Behavioral layer.** The Core Protocols — by **Jim and Michele McCarthy**. License: **GPL v3+**.
+> **Source.** <https://liveingreatness.com/core-protocols/>
+>
+> **Skill marker (used as text anchor for CQL search).** `cursor-skill-delegated-process`
 
-**Open every session — both in chat and on the created Confluence page — with these three lines verbatim.** The page header uses the same three lines so future sessions can find it via CQL.
+**Open every session — both in chat and on the created Confluence page — with the attribution block above verbatim.** The page header uses the same block so future sessions can find it via CQL `text ~ "cursor-skill-delegated-process"`. Both attributions are required even if no Core Protocol is explicitly invoked in a given session.
 
 ## What this skill does
 
@@ -34,6 +38,19 @@ Do **not** use for: crisis or one-off meetings with strangers, podium / informat
 Four core rotating roles: **Facilitator**, **Decision Driver**, **Pacer**, **Process Coach**. Three optional roles activated only when context warrants: **Host** (rotating locations), **Technician** (complex AV), **Scribe** (Facilitator can't write on the board). The decision-maker is excluded from rotation; for Scrum / self-managing teams see the Scrum mapping section in Step 3 below.
 
 For per-role detail (mission, before / during / avoid / hand-off), read [`roles.md`](roles.md). It is the source for every briefing card written into the Confluence page.
+
+## Behavioral layer — Core Protocols
+
+On top of Cardon's role rotation (structure), the skill layers Jim and Michele McCarthy's **Core Protocols** (behavior). The two are orthogonal: Cardon decides *who does what*; the Core Protocols decide *how every attendee shows up*.
+
+Quick map (the full table and rationale live in [`core-protocols.md`](core-protocols.md)):
+
+- **Check In** — opens the meeting; Facilitator cues a one-round check-in.
+- **Decider / Resolution** — Decision Driver uses these to actually drive decisions, instead of ad-hoc "are we close?".
+- **Perfection Game** — Process Coach can use this format for the final 10-minute round.
+- **Pass / Unpass, Ask For Help, Protocol Check, Intention Check, Check Out** — available to any attendee at any time, distributing enforcement away from the Facilitator and Pacer.
+
+**Reference, not reproduction.** The skill only mentions protocols by name and points to the McCarthy source URL. It never reproduces protocol text or mechanics — that would make the skill a GPL derivation. Each role briefing in [`roles.md`](roles.md) ends with a "Core Protocols you can lean on" line so the role-holder knows which protocols to read up on at the source URL before the meeting.
 
 ## Prerequisites — Confluence MCP
 
@@ -72,13 +89,19 @@ If any of these is missing, say so up front and refuse to proceed rather than fa
 
 ### Step 1 — Open with attribution
 
-Print these three lines in the chat before anything else, and again as the page header in Step 8:
+Print this block in the chat before anything else, and again as the page header in Step 8:
 
 ```
-Format: Systemic Team Coaching Delegated Processes — by Alain Cardon, MCC.
+Format (structure): Systemic Team Coaching Delegated Processes — by Alain Cardon, MCC.
 Source: https://www.metasysteme-coaching.eu/english/systemic-team-coaching-delegated-processes/
+
+Behavioral layer: The Core Protocols — by Jim and Michele McCarthy. License: GPL v3+.
+Source: https://liveingreatness.com/core-protocols/
+
 Skill: cursor-skill-delegated-process
 ```
+
+Both author / source blocks are required on every session — even if no Core Protocol is invoked. The McCarthy GPL terms require attribution whenever their work is referenced.
 
 ### Step 2 — cloudId + space
 

@@ -1,0 +1,9 @@
+# Never ship third-party source documents in this repo.
+# Both Cardon's and McCarthy's source PDFs must be referenced by URL only —
+# shipping them would either trigger GPL on the whole skill (McCarthy) or
+# create an attribution / redistribution issue (Cardon).
+*.pdf
+
+# Local commit-message scratch (used by the agent's PowerShell-friendly
+# heredoc workaround when committing).
+.git/COMMIT_MSG.tmp

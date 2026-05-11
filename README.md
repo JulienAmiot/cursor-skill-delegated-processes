@@ -1,28 +1,46 @@
 # cursor-skill-delegated-processes
 
-A [Cursor Agent Skill](https://docs.cursor.com/) that facilitates a recurring team meeting **on Confluence** using **Alain Cardon's Systemic Team Coaching Delegated Processes**.
+A [Cursor Agent Skill](https://docs.cursor.com/) that facilitates a recurring team meeting **on Confluence** by combining two complementary practices:
 
-The skill connects to the Atlassian / Confluence MCP, finds prior sessions in a chosen space by tag and similar title, infers attendees and role history from those pages, proposes a fair role rotation (Cardon's circulation principle), and creates a new timestamped Confluence page tagged with the skill marker. After the meeting it updates the same page with decisions and process notes.
+- **Structure (who does what):** **Alain Cardon's Systemic Team Coaching Delegated Processes** — rotating systemic roles.
+- **Behavior (how each person shows up):** **Jim and Michele McCarthy's Core Protocols** — shared in-meeting protocols any attendee can invoke.
+
+The skill connects to the Atlassian / Confluence MCP, finds prior sessions in a chosen space by tag and similar title, infers attendees and role history from those pages, proposes a fair role rotation (Cardon's circulation principle), points each role-holder at the Core Protocols they can lean on, and creates a new timestamped Confluence page tagged with the skill marker. After the meeting it updates the same page with decisions and process notes.
 
 There is no local roster file and no local rotation log — Confluence is the source of truth.
 
-## Source and attribution
+## Sources and attribution
 
-This skill is a tooling wrapper around the methodology described by **Alain Cardon, MCC** in:
+### Structure / roles — Alain Cardon
 
 > **Systemic Team Coaching Delegated Processes** — A Systemic Team Coaching and Organization Coaching Tool
 > Alain Cardon, MCC — Metasystème Coaching
 > <https://www.metasysteme-coaching.eu/english/systemic-team-coaching-delegated-processes/>
 
-Every session — both in chat and on the created Confluence page — opens with three lines verbatim:
+### Behavioral layer — Jim and Michele McCarthy
+
+> **The Core Protocols** — *Software For Your Head*
+> Jim and Michele McCarthy
+> License: **GPL v3+** — <https://www.gnu.org/licenses/>
+> Source (full text and protocol mechanics): <https://liveingreatness.com/core-protocols/>
+
+The skill **references** the Core Protocols by name and links to the source URL — it does not reproduce protocol text or mechanics, and does not redistribute the McCarthy source document. That is what keeps this skill MIT-licensed (reference, not derivation) while remaining fully GPL-compliant. The integration map (which protocol plugs into which Cardon moment) lives in [`core-protocols.md`](core-protocols.md).
+
+### What every session opens with
+
+Every session — both in chat and on the created Confluence page — opens with this attribution block verbatim:
 
 ```
-Format: Systemic Team Coaching Delegated Processes — by Alain Cardon, MCC.
+Format (structure): Systemic Team Coaching Delegated Processes — by Alain Cardon, MCC.
 Source: https://www.metasysteme-coaching.eu/english/systemic-team-coaching-delegated-processes/
+
+Behavioral layer: The Core Protocols — by Jim and Michele McCarthy. License: GPL v3+.
+Source: https://liveingreatness.com/core-protocols/
+
 Skill: cursor-skill-delegated-process
 ```
 
-The third line is also the **CQL search anchor** that lets the next session find this page. Read Cardon's article directly for the methodology in depth — the skill captures only enough to operate the rotation, briefings, decisions, and process notes.
+The last line is also the **CQL search anchor** that lets the next session find this page in Confluence. Read both source URLs for the practices in depth — the skill captures only enough to operate the rotation, briefings, decisions, and process notes.
 
 ## What's in this repo
 
@@ -30,7 +48,8 @@ The third line is also the **CQL search anchor** that lets the next session find
 .
 ├── README.md             # this file
 ├── SKILL.md              # the skill (the agent reads this)
-├── roles.md              # per-role briefing reference (rendered into each page)
+├── roles.md              # per-role briefing reference, with Core Protocols call-outs
+├── core-protocols.md     # integration map: which Core Protocol plugs into which Cardon moment
 └── confluence-page.html  # canonical page structure (HTML for createConfluencePage)
 ```
 
@@ -106,6 +125,11 @@ The skill flags the mismatch and stops rather than forcing the framework onto an
 
 ## License
 
-The skill code (workflow instructions in `SKILL.md`, the canonical `confluence-page.html`, `roles.md`, `README.md`) is released under the MIT License — see `LICENSE` if present, otherwise treat it as MIT.
+The skill code (workflow instructions in `SKILL.md`, the canonical `confluence-page.html`, `roles.md`, `core-protocols.md`, `README.md`) is released under the **MIT License** — see `LICENSE` if present, otherwise treat it as MIT.
 
-The underlying methodology, terminology, and the Cardon article are © Alain Cardon / Metasystème Coaching. Use them with attribution and within fair-use limits; for training, consulting, or commercial use of the methodology itself, contact Metasystème Coaching directly. The article PDF is **not** redistributed in this repo — please read it at the source URL above.
+Two third-party works are *referenced but not redistributed*:
+
+- **Cardon's article** (© Alain Cardon / Metasystème Coaching) — proprietary, attribution required. Use within fair-use limits; for training, consulting, or commercial use of the methodology itself, contact Metasystème Coaching directly. Read at the source URL above.
+- **McCarthy's Core Protocols** (© Jim and Michele McCarthy, **GPL v3+**) — by referencing protocols by name only and linking to <https://liveingreatness.com/core-protocols/>, this skill does not create a derivation and is not bound by GPL. If you fork this skill and choose to embed the Core Protocols text or PDF, you trigger GPL on your fork and must re-license accordingly and ship the McCarthy source document.
+
+Neither source PDF is included in this repo, by design.

@@ -1,11 +1,26 @@
 # Role Reference
 
-Per-role detail used to populate briefing cards in Step 4 of [`SKILL.md`](SKILL.md).
+Per-role detail used to populate briefings in the Confluence session page.
 
-> Based on Alain Cardon, MCC — *Systemic Team Coaching Delegated Processes*, Metasystème Coaching.
+> **Roles & structure.** Alain Cardon, MCC — *Systemic Team Coaching Delegated Processes*, Metasystème Coaching.
 > <https://www.metasysteme-coaching.eu/english/systemic-team-coaching-delegated-processes/>
+>
+> **In-meeting behaviors.** Jim and Michele McCarthy — *The Core Protocols*. License: GPL v3+.
+> <https://liveingreatness.com/core-protocols/>
 
-Each role section uses the same four-block structure so the briefing-card template can read it mechanically: **Mission · Before · During · Avoid · Hand-off**.
+Each role section uses the same five-block structure so a briefing can be rendered mechanically: **Mission · Before · During · Avoid · Hand-off**, followed by a **Core Protocols you can lean on** line pointing the role-holder at the McCarthy protocols most relevant to that role. Read protocol mechanics at the McCarthy source URL — they are not reproduced here.
+
+## Available to every attendee, regardless of role
+
+Any attendee can invoke the following Core Protocols at any moment in the meeting. They distribute enforcement and self-care away from the Facilitator and Pacer:
+
+- **Pass / Unpass** — decline a turn without explanation; rejoin later.
+- **Ask For Help** — when you need input from a specific teammate.
+- **Protocol Check** — when you observe a behavior that breaks an agreed protocol.
+- **Intention Check** — when the purpose behind a contribution is unclear.
+- **Check Out** — when you genuinely cannot add value, leave (or temporarily disengage) explicitly rather than silently.
+
+Read the mechanics at <https://liveingreatness.com/core-protocols/> before invoking for the first time.
 
 ---
 
@@ -33,6 +48,11 @@ Each role section uses the same four-block structure so the briefing-card templa
 **Hand-off**
 - Close cleanly: confirm the next sequence or end the meeting; cue the Process Coach for the final 10 minutes.
 
+**Core Protocols you can lean on**
+- **Check In** — open the meeting by inviting one round from every attendee.
+- **Protocol Check** — call it (or invite anyone to call it) when a behavior breaks an agreed protocol.
+- **Intention Check** — call it when someone's purpose in the current exchange is unclear.
+
 ---
 
 ## Decision Driver
@@ -58,6 +78,10 @@ Each role section uses the same four-block structure so the briefing-card templa
 - Distribute the filled decisions table to all attendees before they leave the room / call.
 - Pass the file to whoever owns the minutes (often you).
 
+**Core Protocols you can lean on**
+- **Decider** — when the team is debating a binary proposal and consensus stalls, run Decider instead of looping. Read the mechanics at the source URL before the first use.
+- **Resolution** — when Decider gets a No vote, run Resolution to converge. The two protocols are designed to be used together.
+
 ---
 
 ## Pacer
@@ -80,6 +104,9 @@ Each role section uses the same four-block structure so the briefing-card templa
 
 **Hand-off**
 - At the end, share a short observation with the Process Coach about which sequences blew their budget — useful input for the feed-forward round.
+
+**Core Protocols you can lean on**
+- **Protocol Check** — your time announcements ARE a protocol; if attendees ignore them, anyone (including you) can Protocol Check that. Distributed enforcement keeps you out of the time-cop role.
 
 ---
 
@@ -107,6 +134,9 @@ Each role section uses the same four-block structure so the briefing-card templa
 
 **Hand-off**
 - Drop a short anonymised summary into the minutes' "process notes" section so the team can track patterns over time.
+
+**Core Protocols you can lean on**
+- **Perfection Game** — optional, more structured than free-form feed-forward. Run one round per attendee. Read the mechanics at the source URL — the format gives every piece of feedback a consistent shape that makes it easier to act on.
 
 ---
 
