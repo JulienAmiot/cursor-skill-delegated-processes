@@ -1,14 +1,17 @@
 # cursor-skill-delegated-processes
 
-A [Cursor Agent Skill](https://docs.cursor.com/) that facilitates a recurring team meeting **on Confluence** by combining three complementary practices:
+A [Cursor Agent Skill](https://docs.cursor.com/) that facilitates a recurring team meeting using a **local-first capture, deliberate publish** model — Confluence is the first publish target, but the runtime store is a local scratchpad — combining three complementary practices:
 
 - **Roles (who does what):** **Alain Cardon's Systemic Team Coaching Delegated Processes** — rotating systemic roles. Applies to every session.
 - **Behavior (how each person shows up):** **Jim and Michele McCarthy's Core Protocols** — shared in-meeting protocols any attendee can invoke. Applies to every session.
 - **Retrospective agenda (when applicable):** **Esther Derby and Diana Larsen's *Agile Retrospectives*** — the 5-stage agenda (Set the Stage, Gather Data, Generate Insights, Decide What to Do, Close the Retrospective). Applies only when the session is a retrospective.
 
-The skill connects to the Atlassian / Confluence MCP, finds prior sessions in a chosen space by tag and similar title, infers attendees and role history from those pages, proposes a fair role rotation (Cardon's circulation principle), points each role-holder at the Core Protocols they can lean on, and creates a new timestamped Confluence page tagged with the skill marker. After the meeting it updates the same page with decisions and process notes.
+The skill runs in two phases:
 
-There is no local roster file and no local rotation log — Confluence is the source of truth.
+1. **Prepare (Confluence-aware interview).** Connects to the Atlassian / Confluence MCP, finds prior sessions in a chosen space by tag and similar title, reads the team's roster page to resolve attendees to real `@mentions`, proposes a fair role rotation (Cardon's circulation principle), and points each role-holder at the Core Protocols they can lean on.
+2. **Capture-then-publish.** Opens a local session scratchpad at `~/.cursor/skills/delegated-processes/sessions/{YYYYMMDDHHMM}-{slug}/` (with `session.json` + `preview.md`). Decisions, process notes, pacer log, and check-in entries go to the scratchpad **as they happen** during the meeting — Confluence is not touched. At end-of-meeting the skill offers to publish; on confirmation it creates a single new Confluence page tagged with the skill marker, populated end-to-end from the scratchpad.
+
+The local scratchpad is the durable record. Published destinations are derived views of it. The MVP destination is Confluence; the design leaves room for additional adapters (Notion, Slack canvas, GitHub issue, etc.) without changing the capture format.
 
 ## Sources and attribution
 
@@ -122,10 +125,11 @@ The skill follows a strict one-question-at-a-time interview:
 5. CQL-searches the space for prior sessions tagged with `cursor-skill-delegated-process` and with a similar title; if found, infers the canonical title pattern, attendee list, and role history. Also searches for matching **whiteboards** in the same space (Confluence whiteboards are commonly used as the working surface for retros, paired with a minutes page) and offers the most recent one as a linked working surface.
 6. Asks you to confirm attendees (with diff against history if available). Accepts comma-separated, whitespace-separated, or one-per-line input — names only, never team roles. Resolves every name to an Atlassian `accountId` (via prior sessions in the space first, then `lookupJiraAccountId`, with a single fallback prompt if needed) so each attendee is rendered as a real Confluence `@mention` on the page, not plain text.
 7. Proposes role rotation (computed from history) and asks you to approve.
-8. Creates the new Confluence page with attribution header, roles table (every assignee as a Confluence `@mention`), briefings, and empty decision / process-notes sections.
-9. After the meeting, updates the same page with decisions (one pilot, dated deadline, measure) and the Process Coach's notes.
+8. Opens the local session scratchpad (`session.json` + `preview.md`) and prints the rotation table and per-role briefings inline. The meeting can begin.
+9. During the meeting, captures decisions, Decider invocations, process notes, pacer log, and check-in entries into the scratchpad as you call them out — never to Confluence directly.
+10. At the end of the meeting, offers to publish. On confirmation, creates a single new Confluence page from the scratchpad (with attribution header, roles table of `@mentions`, briefings, full Decisions table with pilots and deadlines, Process Coach notes, and — when in retro mode — the 5-stage agenda block) and returns the URL.
 
-The conversation is intentionally minimalist: one prompt per turn, no preamble, no narration.
+The conversation is intentionally minimalist: one prompt per turn, no preamble, no narration. The local scratchpad is preserved after publish so you can re-publish to other destinations later.
 
 ### A note on Scrum / agile teams
 

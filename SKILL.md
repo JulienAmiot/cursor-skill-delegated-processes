@@ -17,15 +17,29 @@ description: Facilitate a recurring team meeting on Confluence using Alain Cardo
 
 ## What this skill does
 
-Operates entirely against Confluence:
+Two phases — **prepare** (Confluence-aware interview) and **capture-then-publish** (local-first, deliberate publish at the end):
 
 1. **Finds prior sessions** in a user-chosen space by searching for the skill marker + similar title.
-2. **Infers attendees and role history** by parsing the prior session pages.
+2. **Infers attendees and role history** by parsing the prior session pages and the team's roster page.
 3. **Proposes role rotation** for the next session using that history (Cardon's circulation principle).
-4. **Creates a new timestamped Confluence page** under the chosen parent, with the attribution header, attendee/role table, briefings for each role-holder, and empty decision/process-notes sections to fill during the meeting.
-5. **Updates the same page** after the meeting with decisions, process notes, and a "next session" hand-off.
+4. **Opens a local session scratchpad** with the resolved metadata (space, parent, title, retro mode, roster with accountIds, role assignment, briefings). The scratchpad is the durable record while the meeting runs.
+5. **Captures decisions, process notes, pacer log, and check-in entries into the scratchpad as they happen** — never directly to Confluence during the meeting.
+6. **At the end of the meeting, offers to publish** the captured session to an external destination. The MVP destination is Confluence (creates a new timestamped page in the chosen parent, populated from the scratchpad). The architecture leaves room for additional adapters later (Notion, Slack canvas, GitHub issue, etc.) without changing the capture format.
 
-There is no local roster file, no local rotation log. The Confluence space is the source of truth.
+Confluence is **read** during the prepare phase (prior sessions, roster, whiteboards) and **written** only once at the end, when the operator confirms the publish. No half-baked pages, no mid-meeting Confluence churn.
+
+### Local-first capture, deliberate publish
+
+The scratchpad lives at `~/.cursor/skills/delegated-processes/sessions/{YYYYMMDDHHMM}-{slugified-title}/` (cross-platform — `%USERPROFILE%\...` on Windows). The skill creates the directory on Step 8.
+
+Each session folder holds:
+
+- `session.json` — canonical structured data (metadata, roster with accountIds, role assignment, decisions, process notes, pacer log, check-in log, publish targets the operator approves).
+- `preview.md` — human-readable rendering, regenerated on every capture so the operator can paste a snapshot into Slack, Loom notes, or share via screen-share during the meeting.
+
+Both files are updated atomically on every capture. If the agent crashes or Cursor restarts, the next agent invocation can resume from `session.json`.
+
+Publish destinations are **derived views** of the scratchpad. Today the only adapter is Confluence; the design assumes more will follow.
 
 ## When to use it
 
@@ -91,15 +105,16 @@ If any of these is missing, say so up front and refuse to proceed rather than fa
 ## Workflow
 
 ```
-- [ ] 1. Open with attribution (3 lines verbatim)
-- [ ] 2. Discover cloudId + ask space
-- [ ] 3. Ask parent location (page OR folder)
-- [ ] 4. Ask session name
-- [ ] 5. Search for prior sessions (pages) AND linked whiteboards; infer canonical title + attendee history
-- [ ] 6. Confirm attendees for this session
-- [ ] 7. Compute + propose role rotation
-- [ ] 8. Confirm rotation; create the page (link parent + working-surface whiteboard)
-- [ ] 9. After the meeting: update the page with decisions + process notes
+- [ ] 1.  Open with attribution (3 lines verbatim)
+- [ ] 2.  Discover cloudId + ask space
+- [ ] 3.  Ask parent location (page OR folder)
+- [ ] 4.  Ask session name
+- [ ] 5.  Search for prior sessions (pages) AND linked whiteboards; infer canonical title + attendee history
+- [ ] 6.  Confirm attendees for this session (resolve to @mentions)
+- [ ] 7.  Compute + propose role rotation
+- [ ] 8.  Open the local session scratchpad; print rotation + briefings inline; meeting begins
+- [ ] 9.  During the meeting: capture decisions, process notes, pacer log, check-in entries into the scratchpad as they happen
+- [ ] 10. End of meeting: offer to publish; on confirmation, render the scratchpad to the chosen destination (MVP: Confluence)
 ```
 
 ### Step 1 — Open with attribution
@@ -240,36 +255,112 @@ Apply Cardon's circulation principle using the role history extracted in Step 5:
 
 Show the proposal as a small table and ask: "Approve rotation?". Wait for `Y` or a swap instruction.
 
-### Step 8 — Create the Confluence page
+### Step 8 — Open the local session scratchpad; print rotation + briefings
 
-Use `createConfluencePage` with:
+Build the session folder at `~/.cursor/skills/delegated-processes/sessions/{YYYYMMDDHHMM}-{slugified-title}/` (create the parent directory if missing). Write two files:
 
-- `spaceId` from Step 2
-- `parentId` from Step 3
-- `title` = canonical pattern from Step 5 (or session name + date for cold start)
-- `contentFormat` = `html`
-- `body` = HTML rendered from the canonical structure in [`confluence-page.html`](confluence-page.html), populated with:
-  - The attribution panel — Cardon + McCarthy + skill marker; **add the Derby & Larsen paragraph if retro mode is on**
-  - The roles + assignees table — **every assignee rendered as a Confluence @mention span**, not plain text
-  - One briefing section per role-holder, content drawn from [`roles.md`](roles.md), with the role-holder's name in the heading also rendered as a @mention
-  - **The 5-stage agenda block — only if retro mode is on** (see [`retrospective-stages.md`](retrospective-stages.md) for stage-by-stage role + protocol mapping and time-budget guidance)
-  - Empty decisions table and process-notes section
-  - A short "rotation context" block citing how many prior sessions were found and linking to the most recent
-  - A "Linked Confluence artifacts" section listing the parent (with `page` or `folder` type) and the matched whiteboard from Step 5 (or `—` if none)
+- `session.json` — the canonical structured record, conforming to:
 
-Confluence labels are not exposed by the MCP `createConfluencePage` tool — the **skill marker** (`cursor-skill-delegated-process`) is therefore embedded in the page header text so CQL `text ~ "cursor-skill-delegated-process"` finds it. **Do not omit the marker.** Without it the next session will not find this page.
+  ```json
+  {
+    "skill": "cursor-skill-delegated-process",
+    "createdAt": "ISO-8601",
+    "retroMode": true,
+    "atlassian": {
+      "cloudId": "…",
+      "spaceId": "…",
+      "spaceKey": "…",
+      "parentId": "…",
+      "parentType": "page|folder",
+      "parentTitle": "…",
+      "parentUrl": "…",
+      "whiteboard": { "id": "…", "title": "…", "url": "…" }   // or null
+    },
+    "title": "…",
+    "titlePattern": "…",
+    "roster": [
+      { "name": "Display Name", "accountId": "…", "rosterContext": "free-form one-liner inferred from the team roster page, optional" }
+    ],
+    "rotation": {
+      "facilitator": "<accountId>",
+      "decisionDriver": "<accountId>",
+      "pacer": "<accountId>",
+      "processCoach": "<accountId>",
+      "host": "<accountId> | null",
+      "technician": "<accountId> | null",
+      "scribe": "<accountId> | null",
+      "decisionMaker": "<accountId> | null",
+      "otherAttendees": ["<accountId>", "…"],
+      "reasoning": "one-line rationale citing prior sessions"
+    },
+    "rotationContext": {
+      "priorSessionCount": 0,
+      "mostRecentPriorSessionUrl": null
+    },
+    "agenda": {                         // present only when retroMode is true
+      "stages": [
+        { "n": 1, "name": "Set the Stage",            "minutes": 5,  "activity": "" },
+        { "n": 2, "name": "Gather Data",              "minutes": 20, "activity": "" },
+        { "n": 3, "name": "Generate Insights",        "minutes": 20, "activity": "" },
+        { "n": 4, "name": "Decide What to Do",        "minutes": 15, "activity": "" },
+        { "n": 5, "name": "Close the Retrospective",  "minutes": 5,  "activity": "" }
+      ]
+    },
+    "captures": {
+      "checkInLog":  [ /* { "by": "<accountId>", "text": "…", "atIso": "…" } */ ],
+      "decisions":   [ /* { "n": 1, "decision": "…", "pilot": "<accountId>", "deadlineIso": "…", "successMeasure": "…", "atIso": "…" } */ ],
+      "deciderLog":  [ /* { "n": 1, "proposal": "…", "outcome": "ADOPTED|RESOLVED|REJECTED", "resolutionNotes": "…", "atIso": "…" } */ ],
+      "processNotes":[ /* { "pattern": "anonymised one-liner", "atIso": "…" } */ ],
+      "pacerLog":    [ /* { "n": 1, "sequence": "…", "plannedMinutes": 20, "actualMinutes": 22, "atIso": "…" } */ ],
+      "stageNotes":  { "1": "", "2": "", "3": "", "4": "", "5": "" }      // retro only
+    },
+    "publish": {
+      "approvedTargets": [],            // populated in Step 10 (e.g. ["confluence"])
+      "results":         []             // [ { "target": "confluence", "url": "…", "publishedAtIso": "…" } ]
+    }
+  }
+  ```
 
-After creation, return the URL to the operator. Do not narrate the contents — they are on the page.
+- `preview.md` — a Markdown rendering of the same data, regenerated atomically on every capture, so the operator can copy/paste a snapshot into Slack or share it via screen-share. The preview contains the attribution block, the rotation table (with `@Name` for each role), the briefings drawn from [`roles.md`](roles.md), the empty capture sections (filled live), and — when retro mode is on — the 5-stage agenda block.
 
-### Step 9 — After the meeting: update the page
+Once the scratchpad is written, **print the rotation table and the per-role briefings inline in the chat** (so attendees can see who they are in the rotation and what to do). The full briefings live in `preview.md` for sharing; the inline chat version may compress to mission + key Core Protocol per role.
 
-Ask the operator to paste back, separately:
+End the prepare phase with: "Scratchpad opened at `<path>`. Meeting can begin — capture commands available in Step 9."
 
-- decisions reached (one per line),
-- the Process Coach's notes (one line per teammate),
-- the Pacer's actual-vs-budget per sequence (optional).
+### Step 9 — During the meeting: live capture into the scratchpad
 
-Then call `updateConfluencePage` to fill the **Decisions** and **Process notes** sections. Do not rewrite the rest of the page. Confirm by linking the updated page.
+The operator drives capture through short commands. Treat each as one capture event; append to `session.json`, regenerate `preview.md`, and acknowledge with a single line (`✓ decision #3 recorded`, `✓ pacer ping for sequence 2 (planned 20 / actual 22)`, etc.). Never ask follow-up questions during the meeting unless a required field is missing — keep the operator in the meeting, not in the chat.
+
+Recognised capture intents (parse loosely; the operator will not type rigid commands while facilitating):
+
+- **`decide` / `decision: …`** — append to `captures.decisions`. Required: decision text, pilot (single accountId), deadline (specific date), success measure. If any is missing, prompt for **only** the missing field, in one short line.
+- **`decider proposal / outcome` / `decider: …`** — append to `captures.deciderLog`. Capture the Decider protocol invocation when the team uses it.
+- **`note: …` / `process: …`** — append to `captures.processNotes` as an anonymised one-liner.
+- **`pacer: sequence N planned X actual Y`** — append to `captures.pacerLog`.
+- **`check in: …`** — append to `captures.checkInLog`.
+- **`stage N notes: …`** (retro mode) — append to `captures.stageNotes[N]`.
+
+Hard rules in capture:
+
+- One pilot per decision. If the operator names two, ask which one.
+- Specific dated deadlines. Reject vague deadlines and ask for a date.
+- No collective process notes. Reject "the team should …" and ask for an anonymised pattern.
+
+The Confluence MCP is **not called** during the meeting. All writes are to the local scratchpad.
+
+### Step 10 — End of meeting: publish
+
+When the operator signals end-of-meeting (e.g. "we're done", "publish", "wrap up"), summarise what's in `session.json` in a single short paragraph (decision count, process-note count, pacer entries, check-in entries) and ask one question: **"Publish to Confluence? (Y / list other destinations / N — keep local only)"**.
+
+The publish layer is destination-agnostic. Each destination is an adapter that takes `session.json` and produces an external artifact. **MVP: Confluence only.** The full list of supported adapters today:
+
+- **`confluence`** — creates a new page via `createConfluencePage` using `atlassian.spaceId` and `atlassian.parentId`, title from `session.json::title`, body rendered from [`confluence-page.html`](confluence-page.html) populated from the scratchpad. After creation, append `{ "target": "confluence", "url": "…", "publishedAtIso": "…" }` to `publish.results` and the URL to the operator. **The skill marker `cursor-skill-delegated-process` MUST appear verbatim in the page header text** so CQL `text ~ "cursor-skill-delegated-process"` will find it on future runs.
+
+Future adapters (not implemented) would attach here: `notion`, `slack-canvas`, `github-issue`, `local-markdown` (just emit `preview.md` as the canonical output), etc.
+
+If the operator declines Confluence and lists no other destination, the scratchpad remains as the durable record. Keep it in place — never auto-delete. The next invocation can re-publish on demand by reading the existing `session.json`.
+
+After a successful publish, ask one more terse question: "Anything to add before we close? (paste / N)". On `N`, end the session.
 
 ## Hard rules (do not negotiate)
 
@@ -278,13 +369,18 @@ Then call `updateConfluencePage` to fill the **Decisions** and **Process notes**
 - **Sequences ≤ 20 minutes** with pacer pings every 5 minutes.
 - **Feed-forward must be addressed to one person at a time**, future-oriented, solution-focused. No collective comments.
 - **Always rotate.** Same person + same role across consecutive sessions = expert capture. Refuse without explicit override.
-- **Always print the 3-line attribution** at session start in chat AND in the page header.
-- **Always include the skill marker `cursor-skill-delegated-process`** in the page header so future runs can find it via CQL.
+- **Always print the 3-line attribution** at session start in chat AND in the published page header.
+- **Always include the skill marker `cursor-skill-delegated-process`** in the published page header so future runs can find it via CQL.
 - **Never apply the framework to crisis meetings, podium presentations, or audiences > 15** — flag the mismatch and stop.
+- **Local-first capture, deliberate publish.** During the meeting, every capture goes to `session.json` (and the regenerated `preview.md`). Confluence is **read** before the meeting and **written** at most once at the end, on the operator's explicit go-ahead.
+- **No upfront Confluence page.** Never create the Confluence page before the meeting starts. The page is the publish artifact, populated end-to-end from the scratchpad after the meeting.
 
 ## Anti-patterns to refuse
 
-- Falling back to local files when the Confluence MCP is unavailable.
+- Creating a Confluence page upfront with empty Decisions / Process notes sections to fill later. The page is the **publish output**, not the runtime store. Use the local scratchpad during the meeting and create the page once at the end.
+- Calling `createConfluencePage` or `updateConfluencePage` during the meeting (between Step 8 and Step 10). Mid-meeting Confluence churn produces half-baked public pages, racy version numbers, and notification spam. Capture goes to `session.json`; Confluence is touched only on the operator's end-of-meeting go-ahead.
+- Treating the local scratchpad as ephemeral. `~/.cursor/skills/delegated-processes/sessions/...` is the durable record of the session and survives Cursor restarts and crashes; the published Confluence page is a derived view of it. Never auto-delete the scratchpad after publish.
+- Falling back to local-only when Confluence is briefly unavailable at publish time (Step 10). Capture has already happened locally; the right move is to retry the publish or queue it, not to silently skip it.
 - Creating a page without the skill marker in the header.
 - Mapping the Scrum Master to the decision-maker slot.
 - Excluding **any** attendee from rotation by virtue of their team role on a Scrum / agile / self-managing team. Such teams rotate everyone equally; offer no opt-out per role.

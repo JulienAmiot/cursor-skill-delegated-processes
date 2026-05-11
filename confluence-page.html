@@ -2,8 +2,13 @@
   Canonical Confluence page structure for the `delegated-processes` skill.
 
   Rules for the agent populating this template:
-  - Render with createConfluencePage / updateConfluencePage using contentFormat="html".
-  - Replace every {{placeholder}} with real content.
+  - This template is the OUTPUT of the Confluence publish adapter, executed
+    once at end-of-meeting from the local session scratchpad
+    (~/.cursor/skills/delegated-processes/sessions/.../session.json). It is
+    NOT created upfront with empty sections to fill later.
+  - Render with createConfluencePage using contentFormat="html". A single
+    create call. No subsequent update calls in the normal flow.
+  - Replace every {{placeholder}} with real content drawn from session.json.
   - The attribution panel and the skill marker MUST stay verbatim — they are
     how the next session finds this page via CQL.
   - Every `{{*_mention}}` placeholder MUST be replaced with a Confluence mention
