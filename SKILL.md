@@ -212,8 +212,16 @@ Sort by date descending. The most recent matching whiteboard (created in the sam
 Plain-text names in the page are an anti-pattern: they don't notify the person, don't link to a profile, and the next session can't reuse them. For every parsed name, resolve to an `accountId` in this order:
 
 1. **Prior sessions in the same space.** If any prior delegated-processes page in the space mentions this name, reuse the `accountId` stored in that page's `<span data-type="mention" data-user-id="...">@Name</span>` element.
-2. **Atlassian directory lookup.** Call `lookupJiraAccountId` with the parsed name as `searchString` (Confluence and Jira share the same user directory, so a Jira lookup resolves Confluence users too). If exactly one user matches, take it. If several match, present the candidates and ask the operator which one in a single terse prompt — never silently guess.
-3. **Operator fallback.** If no candidate is returned, ask the operator once for the `@handle`, the user profile URL, or the `accountId` of the unresolved attendee. Cache every resolution in this session's roster so you only ask once per name.
+2. **Atlassian directory lookup.** Call `lookupJiraAccountId` with the parsed name as `searchString` (Confluence and Jira share the same user directory, so a Jira lookup resolves Confluence users too). The directory returns at most the top 5 by relevance heuristics — for common first names (19 "Carla"s, 65 "Julien"s, etc.) the right person is routinely outside that top 5, so **never trust the top result blindly**.
+3. **Cross-reference against actual space contributors (the disambiguation step that matters).** For each remaining candidate, probe the space directly:
+
+   ```
+   space = "{SPACE_KEY}" AND contributor = "<candidateAccountId>"
+   ```
+
+   A non-empty result proves the candidate has actually touched the space (created, edited, or commented). A candidate with space contributions **wins** over a higher-ranked directory candidate with zero. If exactly one candidate has space contributions, take it silently. If several do, present those (with contribution counts from the `totalSize` field) and ask the operator to pick.
+4. **Read the team roster page when no directory candidate touches the space.** When step 3 eliminates every directory candidate, the right person is in the long tail of the directory. Look up a canonical team-roster page in the same space — try titles like `Resource Plan`, `Team`, `Roles`, `Meeting Organization`, `Daily Stand-up Interface`, or any page that lists team members — and extract the full names directly (either from the page body, or from the `<span data-type="mention" data-user-id="...">@Full Name</span>` spans when available). Then re-call `lookupJiraAccountId` with the **full name from the roster**; that almost always returns the right account as the top result. Re-run the space-contributor check on the new candidate as a sanity test.
+5. **Operator fallback.** Only after steps 1–4 fail, ask the operator once for the `@handle`, profile URL, or `accountId`. Cache every resolution in this session's roster so you only ask once per name.
 
 Render every attendee reference in the Confluence page (roles table, briefings, decisions, process notes, rotation context, check-in log, "other attendees" line) as `<span data-type="mention" data-user-id="ACCOUNT_ID">@Name</span>`. The plain name is fine in chat with the operator; it is **never** acceptable in the rendered page.
 
@@ -286,7 +294,9 @@ Then call `updateConfluencePage` to fill the **Decisions** and **Process notes**
 - Asking attendees for their team role / title / function. The systemic role rotation is peer-to-peer; team role information biases the assignment and must not be collected.
 - Rejecting an attendee list because of its formatting. Comma-separated, whitespace-separated, and one-per-line are all valid — parse and resolve, do not push the work back to the operator.
 - Rendering attendee names as plain text on the Confluence page. Always use the `<span data-type="mention" data-user-id="...">@Name</span>` element so the person is notified and properly linked, and so the next session can parse the page back into a roster.
-- Silently picking one user when `lookupJiraAccountId` returns multiple matches for a name. Always show the candidates and let the operator pick.
+- Silently picking one user when `lookupJiraAccountId` returns multiple matches for a name. Always cross-reference with `space = X AND contributor = "<id>"` first; if multiple candidates still have space contributions, present those with counts and ask the operator.
+- Trusting the top result of `lookupJiraAccountId` when the parsed name is a common first name with many directory matches. The directory's relevance heuristic is space-agnostic; the right person for the meeting is the one who actually touches the chosen Confluence space.
+- Falling back to the operator when a roster page in the space (Resource Plan, Team page, Daily Stand-up Interface, etc.) holds the canonical full names. Read the roster, re-lookup with the full name, and only ask the operator if step 4 also fails.
 - Using a whiteboard ID as `parentId` for `createConfluencePage`. Whiteboards cannot host pages — they are linked artifacts on the session page, never the parent.
 - Restricting the parent search to `type = page`. Folders are first-class containers in modern Confluence and are usually the right ritual hub; always include `type = folder` in parent-discovery CQL and surface folders first in the candidate list.
 - Listing every page in the space when asked to help with the parent. Search for ritual / ceremony hub names across pages **and** folders, present the top few, folders first.
