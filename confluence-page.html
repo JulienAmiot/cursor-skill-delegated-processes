@@ -18,6 +18,10 @@
   <p><strong>Source.</strong> <a href="https://www.metasysteme-coaching.eu/english/systemic-team-coaching-delegated-processes/">https://www.metasysteme-coaching.eu/english/systemic-team-coaching-delegated-processes/</a></p>
   <p><strong>Behavioral layer.</strong> The Core Protocols — by Jim and Michele McCarthy. License: GPL v3+.</p>
   <p><strong>Source.</strong> <a href="https://liveingreatness.com/core-protocols/">https://liveingreatness.com/core-protocols/</a></p>
+  <!-- The next two <p> elements are RETRO-MODE-ONLY. Omit them entirely when
+       the session is not a retrospective. -->
+  <p><strong>Retrospective structure.</strong> Agile Retrospectives: Making Good Teams Great — by Esther Derby and Diana Larsen. Pragmatic Bookshelf, 2006.</p>
+  <p><strong>Source.</strong> <a href="https://pragprog.com/titles/dlret/agile-retrospectives/">https://pragprog.com/titles/dlret/agile-retrospectives/</a></p>
   <p><strong>Skill.</strong> <code>cursor-skill-delegated-process</code></p>
 </div>
 
@@ -96,6 +100,36 @@
 <ul>{{process_coach_avoid_list_items}}</ul>
 <p><strong>At the end.</strong> {{process_coach_handoff}}</p>
 
+<!-- 5-STAGE AGENDA BLOCK — INCLUDE ONLY IN RETROSPECTIVE MODE.
+     Source: Esther Derby and Diana Larsen, Agile Retrospectives:
+     Making Good Teams Great (Pragmatic Bookshelf, 2006).
+     The book is referenced by stage name; activities are not
+     reproduced — see retromat.org or the book itself. -->
+
+<h2>Agenda — Derby &amp; Larsen 5 stages</h2>
+<p><em>Outer structure from <strong>Agile Retrospectives: Making Good Teams Great</strong> by Esther Derby and Diana Larsen — see <a href="https://pragprog.com/titles/dlret/agile-retrospectives/">publisher page</a>. Cardon roles and Core Protocols operate inside each stage. Time budgets are pacing inputs for the Pacer; adjust per team.</em></p>
+<table>
+  <thead>
+    <tr><th>#</th><th>Stage</th><th>Time budget (min)</th><th>Cardon role most active</th><th>Activity chosen</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Set the Stage</td><td>{{stage1_minutes}}</td><td>Facilitator</td><td>{{stage1_activity}}</td></tr>
+    <tr><td>2</td><td>Gather Data</td><td>{{stage2_minutes}}</td><td>Facilitator + Pacer</td><td>{{stage2_activity}}</td></tr>
+    <tr><td>3</td><td>Generate Insights</td><td>{{stage3_minutes}}</td><td>Facilitator</td><td>{{stage3_activity}}</td></tr>
+    <tr><td>4</td><td>Decide What to Do</td><td>{{stage4_minutes}}</td><td>Decision Driver</td><td>{{stage4_activity}}</td></tr>
+    <tr><td>5</td><td>Close the Retrospective</td><td>{{stage5_minutes}}</td><td>Process Coach</td><td>{{stage5_activity}}</td></tr>
+  </tbody>
+</table>
+
+<h3>Stage notes</h3>
+<details><summary>1. Set the Stage — notes</summary><p>{{stage1_notes_or_empty}}</p></details>
+<details><summary>2. Gather Data — notes</summary><p>{{stage2_notes_or_empty}}</p></details>
+<details><summary>3. Generate Insights — notes</summary><p>{{stage3_notes_or_empty}}</p></details>
+<details><summary>4. Decide What to Do — notes</summary><p>{{stage4_notes_or_empty}}</p></details>
+<details><summary>5. Close the Retrospective — notes</summary><p>{{stage5_notes_or_empty}}</p></details>
+
+<!-- END 5-STAGE AGENDA BLOCK -->
+
 <h2>Check In log (optional)</h2>
 <p><em>If the Facilitator opened the meeting with a <strong>Check In</strong> (Core Protocols), capture an anonymised one-liner per attendee or just note that it was held. See <a href="https://liveingreatness.com/core-protocols/">https://liveingreatness.com/core-protocols/</a> for the protocol mechanics.</em></p>
 <ul data-type="task-list">
@@ -147,4 +181,4 @@
 </ul>
 
 <hr>
-<p><em>Structure: Systemic Team Coaching Delegated Processes — Alain Cardon, MCC. Behavior: The Core Protocols — Jim and Michele McCarthy (GPL v3+). Marker: <code>cursor-skill-delegated-process</code>.</em></p>
+<p><em>Structure: Systemic Team Coaching Delegated Processes — Alain Cardon, MCC. Behavior: The Core Protocols — Jim and Michele McCarthy (GPL v3+). <!-- retro-only --> Retrospective agenda (when applicable): Agile Retrospectives — Esther Derby and Diana Larsen (Pragmatic Bookshelf, 2006). Marker: <code>cursor-skill-delegated-process</code>.</em></p>

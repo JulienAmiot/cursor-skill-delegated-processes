@@ -1,6 +1,6 @@
 ---
 name: delegated-processes
-description: Facilitate a recurring team meeting on Confluence using Alain Cardon's Systemic Team Coaching Delegated Processes (rotating roles) layered with Jim and Michele McCarthy's Core Protocols (in-meeting behaviors). Connects to the Atlassian / Confluence MCP, discovers prior sessions in a chosen space by tag and similar title, infers attendees and role history, proposes a fair role rotation (Facilitator, Decision Driver, Pacer, Process Coach, plus optional Host / Technician / Scribe), points each role-holder at the Core Protocols they can lean on (Check In, Decider, Resolution, Perfection Game, Pass, Protocol Check, Intention Check, Ask For Help, Check Out), and creates a new timestamped Confluence page tagged with the skill marker. Use when the user asks to facilitate, prepare, or run a team meeting; mentions delegated roles, role rotation, systemic team coaching, Alain Cardon, Metasysteme; mentions the Core Protocols, Software For Your Head, McCarthy, Decider, Check In, Perfection Game; runs a Scrum / agile ceremony with rotating facilitation; or wants meeting minutes that track who held which role across sessions.
+description: Facilitate a recurring team meeting on Confluence using Alain Cardon's Systemic Team Coaching Delegated Processes (rotating roles) layered with Jim and Michele McCarthy's Core Protocols (in-meeting behaviors), and — when the meeting is a retrospective — structured around the 5-stage agenda from Esther Derby and Diana Larsen's Agile Retrospectives. Connects to the Atlassian / Confluence MCP, discovers prior sessions in a chosen space by tag and similar title, infers attendees and role history, proposes a fair role rotation (Facilitator, Decision Driver, Pacer, Process Coach, plus optional Host / Technician / Scribe), points each role-holder at the Core Protocols they can lean on (Check In, Decider, Resolution, Perfection Game, Pass, Protocol Check, Intention Check, Ask For Help, Check Out), and creates a new timestamped Confluence page tagged with the skill marker (with a 5-stage agenda block when in retro mode). Use when the user asks to facilitate, prepare, or run a team meeting; mentions delegated roles, role rotation, systemic team coaching, Alain Cardon, Metasysteme; mentions the Core Protocols, Software For Your Head, McCarthy, Decider, Check In, Perfection Game; runs a Scrum / agile ceremony with rotating facilitation; runs a retrospective and mentions Derby, Larsen, Agile Retrospectives, or the 5 stages (Set the Stage, Gather Data, Generate Insights, Decide What to Do, Close); or wants meeting minutes that track who held which role across sessions.
 ---
 
 # Systemic Delegated Processes + Core Protocols — Confluence-driven facilitation
@@ -38,6 +38,19 @@ Do **not** use for: crisis or one-off meetings with strangers, podium / informat
 Four core rotating roles: **Facilitator**, **Decision Driver**, **Pacer**, **Process Coach**. Three optional roles activated only when context warrants: **Host** (rotating locations), **Technician** (complex AV), **Scribe** (Facilitator can't write on the board). The decision-maker is excluded from rotation; for Scrum / self-managing teams see the Scrum mapping section in Step 3 below.
 
 For per-role detail (mission, before / during / avoid / hand-off), read [`roles.md`](roles.md). It is the source for every briefing card written into the Confluence page.
+
+## Retrospective mode — Derby & Larsen 5 stages
+
+When the meeting is a **retrospective**, the skill activates "retro mode" and structures the agenda around the 5 stages from:
+
+> **Agile Retrospectives: Making Good Teams Great** — by **Esther Derby** and **Diana Larsen**. Pragmatic Bookshelf, 2006.
+> Source: <https://pragprog.com/titles/dlret/agile-retrospectives/>
+
+The 5 stages: **Set the Stage · Gather Data · Generate Insights · Decide What to Do · Close the Retrospective**. They become the outer agenda; Cardon roles and Core Protocols operate inside it. Detection rules and the per-stage map of which role and which protocol activate live in [`retrospective-stages.md`](retrospective-stages.md).
+
+**Reference, not reproduction.** As with the Core Protocols, the skill cites Derby & Larsen and the book + publisher URL but does not reproduce activities, exercises, or extended text from the book. Read the book for the activities; use a community catalog like retromat.org for inspiration.
+
+When retro mode is **off**, Derby & Larsen are not cited (the framework is not being applied). The Cardon and McCarthy attributions remain on every session regardless.
 
 ## Behavioral layer — Core Protocols
 
@@ -89,7 +102,7 @@ If any of these is missing, say so up front and refuse to proceed rather than fa
 
 ### Step 1 — Open with attribution
 
-Print this block in the chat before anything else, and again as the page header in Step 8:
+Print the **standard** block in the chat before anything else, and again as the page header in Step 8:
 
 ```
 Format (structure): Systemic Team Coaching Delegated Processes — by Alain Cardon, MCC.
@@ -101,7 +114,14 @@ Source: https://liveingreatness.com/core-protocols/
 Skill: cursor-skill-delegated-process
 ```
 
-Both author / source blocks are required on every session — even if no Core Protocol is invoked. The McCarthy GPL terms require attribution whenever their work is referenced.
+If retro mode is active (see Step 4), insert this **additional** block between the Core Protocols block and the `Skill:` line:
+
+```
+Retrospective structure: Agile Retrospectives: Making Good Teams Great — by Esther Derby and Diana Larsen. Pragmatic Bookshelf, 2006.
+Source: https://pragprog.com/titles/dlret/agile-retrospectives/
+```
+
+The Cardon and McCarthy blocks are required on every session even if no protocol is invoked. The Derby & Larsen block is only required when retro mode is active.
 
 ### Step 2 — cloudId + space
 
@@ -121,9 +141,17 @@ If the meeting is a Scrum ceremony or any agile context with no clear "boss", as
 
 Record the answer in the session page (under `## Scrum mapping`). On subsequent runs, read the most recent prior session and reuse the recorded mapping unless the user overrides. **Refuse to map the Scrum Master to the decision-maker slot** — the SM is a facilitator / coach, not an authority.
 
-### Step 4 — Session name
+### Step 4 — Session name + retro detection
 
 Ask: "Session name?". One word or short phrase is fine ("Campaign Retro", "Atlas Weekly Exec").
+
+Then determine retro mode:
+
+- If the name contains "retro" or "retrospective" (case-insensitive) → retro mode is **on**, no extra question needed.
+- Else if the most recent prior session for this title (found in Step 5) was already in retro mode → retro mode is **on**, no extra question needed.
+- Else → ask one targeted question: "Is this a retrospective? (Y/N)".
+
+Record the answer; it drives Step 8 (page rendering) and the attribution block in Step 1 / page header.
 
 ### Step 5 — Find prior sessions and infer canonical title + attendees
 
@@ -170,10 +198,11 @@ Use `createConfluencePage` with:
 - `title` = canonical pattern from Step 5 (or session name + date for cold start)
 - `contentFormat` = `html`
 - `body` = HTML rendered from the canonical structure in [`confluence-page.html`](confluence-page.html), populated with:
-  - The 3-line attribution header (verbatim)
+  - The attribution panel — Cardon + McCarthy + skill marker; **add the Derby & Larsen paragraph if retro mode is on**
   - The Scrum mapping (if applicable)
   - The roles + assignees table
   - One briefing section per role-holder, content drawn from [`roles.md`](roles.md)
+  - **The 5-stage agenda block — only if retro mode is on** (see [`retrospective-stages.md`](retrospective-stages.md) for stage-by-stage role + protocol mapping and time-budget guidance)
   - Empty decisions table and process-notes section
   - A short "rotation context" block citing how many prior sessions were found and linking to the most recent
 

@@ -7,6 +7,8 @@ Per-role detail used to populate briefings in the Confluence session page.
 >
 > **In-meeting behaviors.** Jim and Michele McCarthy — *The Core Protocols*. License: GPL v3+.
 > <https://liveingreatness.com/core-protocols/>
+>
+> **Retrospective outer agenda (retros only).** Esther Derby and Diana Larsen — *Agile Retrospectives: Making Good Teams Great* (Pragmatic Bookshelf, 2006). When the session is a retrospective, see [`retrospective-stages.md`](retrospective-stages.md) for the stage-by-stage map of which role and which Core Protocols activate in each of the 5 stages. <https://pragprog.com/titles/dlret/agile-retrospectives/>
 
 Each role section uses the same five-block structure so a briefing can be rendered mechanically: **Mission · Before · During · Avoid · Hand-off**, followed by a **Core Protocols you can lean on** line pointing the role-holder at the McCarthy protocols most relevant to that role. Read protocol mechanics at the McCarthy source URL — they are not reproduced here.
 
