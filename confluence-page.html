@@ -1,0 +1,131 @@
+<!--
+  Canonical Confluence page structure for the `delegated-processes` skill.
+
+  Rules for the agent populating this template:
+  - Render with createConfluencePage / updateConfluencePage using contentFormat="html".
+  - Replace every {{placeholder}} with real content.
+  - The 3-line attribution panel and the skill marker MUST stay verbatim — they
+    are how the next session finds this page via CQL.
+  - The "Roles" table MUST keep two columns (Role | Person) and the four core
+    role names exactly as written, so the next session can parse role history.
+  - Sections may be empty at create time (Decisions, Process notes); fill on
+    update after the meeting. Do not delete empty sections — leave them as
+    empty tables / lists so updates are idempotent.
+-->
+
+<div data-type="panel-info">
+  <p><strong>Format.</strong> Systemic Team Coaching Delegated Processes — by Alain Cardon, MCC.</p>
+  <p><strong>Source.</strong> <a href="https://www.metasysteme-coaching.eu/english/systemic-team-coaching-delegated-processes/">https://www.metasysteme-coaching.eu/english/systemic-team-coaching-delegated-processes/</a></p>
+  <p><strong>Skill.</strong> <code>cursor-skill-delegated-process</code></p>
+</div>
+
+<h1>{{session_title}} — {{session_date_iso}}</h1>
+
+<h2>Scrum mapping</h2>
+<p>{{scrum_mapping_choice_or_dash}}</p>
+
+<h2>Attendees and roles</h2>
+<table>
+  <thead>
+    <tr><th>Role</th><th>Person</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Facilitator</td><td>{{facilitator_name}}</td></tr>
+    <tr><td>Decision Driver</td><td>{{decision_driver_name}}</td></tr>
+    <tr><td>Pacer</td><td>{{pacer_name}}</td></tr>
+    <tr><td>Process Coach</td><td>{{process_coach_name}}</td></tr>
+    <!-- Optional roles appear only if activated for this team. Keep the row
+         omitted (not blank) when not active so the parser ignores them. -->
+    <tr><td>Host</td><td>{{host_name_or_omit_row}}</td></tr>
+    <tr><td>Technician</td><td>{{technician_name_or_omit_row}}</td></tr>
+    <tr><td>Scribe</td><td>{{scribe_name_or_omit_row}}</td></tr>
+  </tbody>
+</table>
+
+<p><em>Decision-maker (excluded from rotation):</em> {{decision_maker_name_or_dash}}</p>
+<p><em>Other attendees (no process role this session):</em> {{other_attendees_or_dash}}</p>
+
+<h2>Rotation context</h2>
+<ul>
+  <li>Prior sessions found in this space tagged with the skill marker: <strong>{{prior_session_count}}</strong></li>
+  <li>Most recent prior session: {{most_recent_link_or_dash}}</li>
+  <li>Reasoning for this session's picks: {{rotation_reasoning_one_line}}</li>
+</ul>
+
+<h2>Briefings</h2>
+
+<h3>Facilitator — {{facilitator_name}}</h3>
+<p><strong>Mission.</strong> {{facilitator_mission}}</p>
+<p><strong>Before.</strong></p>
+<ul>{{facilitator_before_list_items}}</ul>
+<p><strong>During.</strong></p>
+<ul>{{facilitator_during_list_items}}</ul>
+<p><strong>Avoid.</strong></p>
+<ul>{{facilitator_avoid_list_items}}</ul>
+<p><strong>At the end.</strong> {{facilitator_handoff}}</p>
+
+<h3>Decision Driver — {{decision_driver_name}}</h3>
+<p><strong>Mission.</strong> {{decision_driver_mission}}</p>
+<p><strong>Before.</strong></p>
+<ul>{{decision_driver_before_list_items}}</ul>
+<p><strong>During.</strong></p>
+<ul>{{decision_driver_during_list_items}}</ul>
+<p><strong>Avoid.</strong></p>
+<ul>{{decision_driver_avoid_list_items}}</ul>
+<p><strong>At the end.</strong> {{decision_driver_handoff}}</p>
+
+<h3>Pacer — {{pacer_name}}</h3>
+<p><strong>Mission.</strong> {{pacer_mission}}</p>
+<p><strong>Before.</strong></p>
+<ul>{{pacer_before_list_items}}</ul>
+<p><strong>During.</strong></p>
+<ul>{{pacer_during_list_items}}</ul>
+<p><strong>Avoid.</strong></p>
+<ul>{{pacer_avoid_list_items}}</ul>
+<p><strong>At the end.</strong> {{pacer_handoff}}</p>
+
+<h3>Process Coach — {{process_coach_name}}</h3>
+<p><strong>Mission.</strong> {{process_coach_mission}}</p>
+<p><strong>Before.</strong></p>
+<ul>{{process_coach_before_list_items}}</ul>
+<p><strong>During.</strong></p>
+<ul>{{process_coach_during_list_items}}</ul>
+<p><strong>Avoid.</strong></p>
+<ul>{{process_coach_avoid_list_items}}</ul>
+<p><strong>At the end.</strong> {{process_coach_handoff}}</p>
+
+<h2>Decisions</h2>
+<p><em>Filled by the Decision Driver during/after the meeting. One pilot per decision. Specific, dated deadlines.</em></p>
+<table>
+  <thead>
+    <tr><th>#</th><th>Decision</th><th>Pilot</th><th>Deadline</th><th>Measure of success</th></tr>
+  </thead>
+  <tbody>
+    <!-- One row per decision. Empty <tbody/> at create time. -->
+  </tbody>
+</table>
+
+<h2>Process notes (from the Process Coach)</h2>
+<p><em>Anonymised pattern summary from the final 10-minute feed-forward round. No collective judgements; surface trends only.</em></p>
+<ul>
+  <!-- One bullet per pattern. Empty <ul/> at create time. -->
+</ul>
+
+<h2>Pacer log (optional)</h2>
+<table>
+  <thead>
+    <tr><th>#</th><th>Sequence</th><th>Planned (min)</th><th>Actual (min)</th></tr>
+  </thead>
+  <tbody>
+    <!-- One row per sequence. Empty <tbody/> at create time. -->
+  </tbody>
+</table>
+
+<h2>Next session</h2>
+<ul>
+  <li>Suggested date: {{next_session_date_or_dash}}</li>
+  <li>Notes for next rotation: {{next_rotation_notes_or_dash}}</li>
+</ul>
+
+<hr>
+<p><em>Format: Systemic Team Coaching Delegated Processes — Alain Cardon, MCC. Marker: <code>cursor-skill-delegated-process</code>.</em></p>

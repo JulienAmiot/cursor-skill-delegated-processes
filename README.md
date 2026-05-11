@@ -1,10 +1,12 @@
 # cursor-skill-delegated-processes
 
-A [Cursor Agent Skill](https://docs.cursor.com/) that helps facilitate a recurring team meeting using **Alain Cardon's Systemic Delegated Processes**.
+A [Cursor Agent Skill](https://docs.cursor.com/) that facilitates a recurring team meeting **on Confluence** using **Alain Cardon's Systemic Team Coaching Delegated Processes**.
 
-The skill assigns rotating systemic roles to attendees (Facilitator, Decision Driver, Pacer, Process Coach, plus optional Host / Technician / Scribe), generates a personal briefing card for each person so they know exactly what to do before / during / after the meeting, and produces minutes that update a rotation log so the next meeting rotates roles fairly.
+The skill connects to the Atlassian / Confluence MCP, finds prior sessions in a chosen space by tag and similar title, infers attendees and role history from those pages, proposes a fair role rotation (Cardon's circulation principle), and creates a new timestamped Confluence page tagged with the skill marker. After the meeting it updates the same page with decisions and process notes.
 
-## Source & attribution
+There is no local roster file and no local rotation log — Confluence is the source of truth.
+
+## Source and attribution
 
 This skill is a tooling wrapper around the methodology described by **Alain Cardon, MCC** in:
 
@@ -12,27 +14,38 @@ This skill is a tooling wrapper around the methodology described by **Alain Card
 > Alain Cardon, MCC — Metasystème Coaching
 > <https://www.metasysteme-coaching.eu/english/systemic-team-coaching-delegated-processes/>
 
-Every artifact the skill produces (briefing cards, minutes, rotation log entries) cites the author and the source URL. Please keep that attribution intact when you adapt or share the outputs.
+Every session — both in chat and on the created Confluence page — opens with three lines verbatim:
 
-If you want to learn the methodology in depth, read Cardon's article directly — this skill captures only enough of it to operate the rotation, the briefings, and the minutes.
+```
+Format: Systemic Team Coaching Delegated Processes — by Alain Cardon, MCC.
+Source: https://www.metasysteme-coaching.eu/english/systemic-team-coaching-delegated-processes/
+Skill: cursor-skill-delegated-process
+```
 
-A copy of the article is included in `example/export.pdf` for offline reference.
+The third line is also the **CQL search anchor** that lets the next session find this page. Read Cardon's article directly for the methodology in depth — the skill captures only enough to operate the rotation, briefings, decisions, and process notes.
 
 ## What's in this repo
 
 ```
 .
-├── README.md            # this file
-├── SKILL.md             # the skill (the agent reads this)
-├── roles.md             # per-role briefing reference
-├── templates/
-│   ├── roster.md        # team roster template
-│   ├── rotation-log.md  # rotation history template
-│   ├── briefing-card.md # personal briefing template
-│   └── minutes.md       # meeting minutes template
-└── example/
-    └── export.pdf       # the source article (Cardon, 2008)
+├── README.md             # this file
+├── SKILL.md              # the skill (the agent reads this)
+├── roles.md              # per-role briefing reference (rendered into each page)
+└── confluence-page.html  # canonical page structure (HTML for createConfluencePage)
 ```
+
+## Prerequisites
+
+An Atlassian / Confluence MCP server must be configured in Cursor with at least these tools:
+
+- `getAccessibleAtlassianResources`
+- `getConfluenceSpaces`
+- `getConfluencePage`
+- `searchConfluenceUsingCql`
+- `createConfluencePage`
+- `updateConfluencePage`
+
+If any of these is missing, the skill refuses to start rather than fall back to local files. The whole point of the redesign is that Confluence is the durable store — no half-measures.
 
 ## Install
 
@@ -63,29 +76,36 @@ Restart Cursor (or reload the skills index) and the agent will discover it.
 
 In a Cursor chat, ask things like:
 
-- "Help me prepare next Monday's exec meeting using the delegated-processes skill."
-- "Assign roles for this week's standup — here's the roster."
-- "Write minutes for the meeting we just ran and update the rotation log."
+- "Run a delegated-processes session for our weekly exec meeting."
+- "Prepare the Sprint 17 retro for the Campaign team in Confluence."
+- "Update yesterday's retro page with these decisions: …"
 
-The skill will:
+The skill follows a strict one-question-at-a-time interview:
 
-1. Find or create `roster.md` and `rotation-log.md` in your working directory.
-2. Propose role assignments that respect Cardon's circulation principle and wait for your confirmation.
-3. Print one briefing card per attendee (with attribution).
-4. After the meeting, write minutes (decisions / pilot / dated deadline / measure) and append a row to `rotation-log.md`.
+1. Opens with the 3-line attribution.
+2. Discovers the Atlassian cloudId, asks which space.
+3. Asks the parent page (where session pages should live).
+4. Asks the session name.
+5. CQL-searches the space for prior sessions tagged with `cursor-skill-delegated-process` and with a similar title; if found, infers the canonical title pattern, attendee list, and role history.
+6. Asks you to confirm attendees (with diff against history if available).
+7. Proposes role rotation (computed from history) and asks you to approve.
+8. Creates the new Confluence page with attribution header, roles table, briefings, and empty decision / process-notes sections.
+9. After the meeting, updates the same page with decisions (one pilot, dated deadline, measure) and the Process Coach's notes.
+
+The conversation is intentionally minimalist: one prompt per turn, no preamble, no narration.
 
 ## Scope (and what it explicitly won't do)
 
-Per Cardon, this approach fits **intact teams of 5–15 people** in **regularly scheduled, decision-centred meetings**. The skill is intentionally not used for:
+Per Cardon, this approach fits **intact teams of 5–15 people** in **regularly scheduled, decision-centred meetings**. The skill is not used for:
 
 - Crisis or one-off meetings with strangers from disparate origins.
 - Podium / one-way informational presentations.
 - Audiences larger than ~15 people.
 
-The skill flags the mismatch instead of forcing the framework onto an unsuitable meeting.
+The skill flags the mismatch and stops rather than forcing the framework onto an unsuitable meeting.
 
 ## License
 
-The skill code (templates, workflow instructions in `SKILL.md`, `README.md`) is released under the MIT License — see `LICENSE` if present, otherwise treat it as MIT.
+The skill code (workflow instructions in `SKILL.md`, the canonical `confluence-page.html`, `roles.md`, `README.md`) is released under the MIT License — see `LICENSE` if present, otherwise treat it as MIT.
 
-The underlying methodology, terminology, and the article in `example/export.pdf` are © Alain Cardon / Metasystème Coaching. Use them with attribution and within fair-use limits; for training, consulting, or commercial use of the methodology itself, contact Metasystème Coaching directly.
+The underlying methodology, terminology, and the Cardon article are © Alain Cardon / Metasystème Coaching. Use them with attribution and within fair-use limits; for training, consulting, or commercial use of the methodology itself, contact Metasystème Coaching directly. The article PDF is **not** redistributed in this repo — please read it at the source URL above.
