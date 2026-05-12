@@ -1,6 +1,6 @@
 ---
 name: delegated-processes
-description: Facilitate a recurring team meeting on Confluence using Alain Cardon's Systemic Team Coaching Delegated Processes (rotating roles) layered with Jim and Michele McCarthy's Core Protocols (in-meeting behaviors), and — when the meeting is a retrospective — structured around the 5-stage agenda from Esther Derby and Diana Larsen's Agile Retrospectives. Connects to the Atlassian / Confluence MCP, discovers prior sessions in a chosen space by tag and similar title, infers attendees and role history, proposes a fair role rotation (Facilitator, Decision Driver, Pacer, Process Coach, plus optional Host / Technician / Scribe), points each role-holder at the Core Protocols they can lean on (Check In, Decider, Resolution, Perfection Game, Pass, Protocol Check, Intention Check, Ask For Help, Check Out), and creates a new timestamped Confluence page tagged with the skill marker (with a 5-stage agenda block when in retro mode). Use when the user asks to facilitate, prepare, or run a team meeting; mentions delegated roles, role rotation, systemic team coaching, Alain Cardon, Metasysteme; mentions the Core Protocols, Software For Your Head, McCarthy, Decider, Check In, Perfection Game; runs a Scrum / agile ceremony with rotating facilitation; runs a retrospective and mentions Derby, Larsen, Agile Retrospectives, or the 5 stages (Set the Stage, Gather Data, Generate Insights, Decide What to Do, Close); or wants meeting minutes that track who held which role across sessions.
+description: Facilitate a recurring team meeting on Confluence using Alain Cardon's Systemic Team Coaching Delegated Processes (rotating roles) layered with Jim and Michele McCarthy's Core Protocols (in-meeting behaviors), and — when the meeting is a retrospective — structured around the 5-stage agenda from Esther Derby and Diana Larsen's Agile Retrospectives. Connects to the Atlassian / Confluence MCP, discovers prior sessions in a chosen space by tag and similar title, infers attendees and role history, proposes a fair role rotation (Facilitator, Decision Driver, Pacer, Process Coach, plus optional Host / Technician / Scribe), points each role-holder at the Core Protocols they can lean on (Check In, Decider, Resolution, Perfection Game, Pass, Protocol Check, Intention Check, Ask For Help, Check Out), supports an optional Silent round (NGT / KJ method lineage) the Decision Driver can invoke to shape judgment-heavy decisions before commitment (silent generation → simultaneous reveal → cluster or discuss → optional silent re-think → Decider or handoff), and creates a new timestamped Confluence page tagged with the skill marker (with a 5-stage agenda block when in retro mode and a Silent rounds section when at least one was invoked). Use when the user asks to facilitate, prepare, or run a team meeting; mentions delegated roles, role rotation, systemic team coaching, Alain Cardon, Metasysteme; mentions the Core Protocols, Software For Your Head, McCarthy, Decider, Check In, Perfection Game; runs a Scrum / agile ceremony with rotating facilitation; runs a retrospective and mentions Derby, Larsen, Agile Retrospectives, or the 5 stages (Set the Stage, Gather Data, Generate Insights, Decide What to Do, Close); mentions silent round, nominal group technique, NGT, affinity diagram, KJ method, silent brainwriting, anti-anchoring decision-shaping, HiPPO, or wants a structured way to surface judgment before committing a decision; or wants meeting minutes that track who held which role across sessions.
 ---
 
 # Systemic Delegated Processes + Core Protocols — Confluence-driven facilitation
@@ -81,6 +81,22 @@ Quick map (the full table and rationale live in [`core-protocols.md`](core-proto
 
 **Reference, not reproduction.** The skill only mentions protocols by name and points to the McCarthy source URL. It never reproduces protocol text or mechanics — that would make the skill a GPL derivation. Each role briefing in [`roles.md`](roles.md) ends with a "Core Protocols you can lean on" line so the role-holder knows which protocols to read up on at the source URL before the meeting.
 
+## Decision-shaping protocol — Silent round (when invoked)
+
+For judgment-heavy decisions where the room has a HiPPO dynamic or visible expertise asymmetry, the Decision Driver can invoke a **Silent round**: silent generation → simultaneous reveal → optional author-explains → cluster (Path A) or discuss (Path B) → optional silent re-think → Decider or handoff.
+
+It is **not** a McCarthy Core Protocol. It is a Cardon-layer composition that uses several Core Protocols as primitives (Intention Check, Pass / Unpass, Ask For Help, Protocol Check, Decider, Resolution). The lineage is public-domain methodology:
+
+- **Nominal Group Technique** — Delbecq, Van de Ven & Gustafson (1971, 1975) — structural ancestor (silent → share → discuss → re-think → decide).
+- **KJ method / affinity diagram** — Jiro Kawakita (1960s) — simultaneous-reveal and clustering ancestor.
+- **Silent brainwriting** — Bernd Rohrbach (1968) — simultaneous-posting ancestor.
+
+The full protocol — phases, role + protocol map, Path A vs Path B, hard rules, anti-patterns — lives in [`silent-round.md`](silent-round.md). The Decision Driver reads it before the first invocation.
+
+Use it for: impact / severity / confidence rating, root-cause weighting, action selection from a long list, qualitative data gathering ("what surprised you?"), picking among options where the first speaker would frame the choice set. **Reserve it** for judgment-heavy or anchoring-prone questions; do not run a Silent round on every decision.
+
+The skill cites the Silent round lineage **only when at least one Silent round is invoked in the session**. The Cardon and McCarthy attributions remain unconditional; the Derby & Larsen block remains retro-mode-only.
+
 ## Prerequisites — Confluence MCP
 
 The skill **requires** an Atlassian / Confluence MCP server with at least these tools:
@@ -138,7 +154,16 @@ Retrospective structure: Agile Retrospectives: Making Good Teams Great — by Es
 Source: https://pragprog.com/titles/dlret/agile-retrospectives/
 ```
 
-The Cardon and McCarthy blocks are required on every session even if no protocol is invoked. The Derby & Larsen block is only required when retro mode is active.
+When at least one **Silent round** has been invoked in this session (Step 9), this **additional** block is appended to the chat opening (retroactively, on first invocation) and to the published page header (Step 10) between the previous block and the `Skill:` line:
+
+```
+Decision-shaping (when invoked): Silent round — silent generation → simultaneous reveal → optional author explains → cluster or discuss → optional silent re-think → Decider or handoff.
+Lineage: Nominal Group Technique — Delbecq, Van de Ven & Gustafson (1971, 1975).
+Simultaneous reveal + clustering: KJ method — Jiro Kawakita (1960s) · silent brainwriting — Bernd Rohrbach (1968).
+At most 2 silent phases per round. '?' sticky permitted for clarifying questions.
+```
+
+The Cardon and McCarthy blocks are required on every session even if no protocol is invoked. The Derby & Larsen block is only required when retro mode is active. The Silent round block is only required when at least one Silent round was invoked.
 
 ### Step 2 — cloudId + space
 
@@ -312,7 +337,28 @@ Build the session folder at `~/.cursor/skills/delegated-processes/sessions/{YYYY
       "deciderLog":  [ /* { "n": 1, "proposal": "…", "outcome": "ADOPTED|RESOLVED|REJECTED", "resolutionNotes": "…", "atIso": "…" } */ ],
       "processNotes":[ /* { "pattern": "anonymised one-liner", "atIso": "…" } */ ],
       "pacerLog":    [ /* { "n": 1, "sequence": "…", "plannedMinutes": 20, "actualMinutes": 22, "atIso": "…" } */ ],
-      "stageNotes":  { "1": "", "2": "", "3": "", "4": "", "5": "" }      // retro only
+      "stageNotes":  { "1": "", "2": "", "3": "", "4": "", "5": "" },     // retro only
+      "silentLog":   [
+        /*
+        {
+          "n": 1,
+          "prompt": "…",
+          "outputShape": "ideas | options | concerns | rank-top-N | rate-1-5 | tshirt",
+          "path": "A-cluster | B-discuss",
+          "attribution": false,
+          "items": [ { "i": 1, "text": "verbatim sticky", "from": null } ],
+          "clusters": [ { "theme": "…", "itemIndices": [1, 4, 7] } ],
+          "ranks":    [ { "round": 1, "values": ["…"], "atIso": "…" } ],
+          "discussionNotes": [ "…" ],
+          "outcome": "converged | most-supported-with-dissent | handoff | aborted",
+          "convergedProposal": "…",
+          "dissent": "one-liner naming dissenting position",
+          "handoffTo": "next agenda step or retro stage",
+          "linkedDecisionId": 3,
+          "atIso": "…"
+        }
+        */
+      ]
     },
     "publish": {
       "approvedTargets": [],            // populated in Step 10 (e.g. ["confluence"])
@@ -339,12 +385,25 @@ Recognised capture intents (parse loosely; the operator will not type rigid comm
 - **`pacer: sequence N planned X actual Y`** — append to `captures.pacerLog`.
 - **`check in: …`** — append to `captures.checkInLog`.
 - **`stage N notes: …`** (retro mode) — append to `captures.stageNotes[N]`.
+- **Silent round intents** (see [`silent-round.md`](silent-round.md) for the full protocol). All append to the current `captures.silentLog` entry, identified by the most recent `silent start:` that has not yet exited:
+  - **`silent start: <prompt> [shape: ideas | options | concerns | rank-top-N | rate-1-5 | tshirt] [path: A | B]`** — open a new entry. On the first invocation of the session, also append the Silent round attribution block (Step 1) to the chat opening so the team can see the practice is in play.
+  - **`silent reveal: <items, one per attendee>`** — capture the simultaneous reveal verbatim into `items[]`. Per-item authorship (`from`) is captured only when the operator opted into attribution at `silent start:` time; default is no authorship in the log.
+  - **`silent cluster: <theme name> :: <item indices>`** — Path A only. Append a cluster.
+  - **`silent rank: <round N> values: <…>`** — Path B numeric / ranking shape only. Append a rank reveal.
+  - **`silent talk: <one-line summary>`** — append to `discussionNotes` (clarifying summary of Phase 3 or Phase 2.5 explanations; the meeting itself is not transcribed).
+  - **`silent converged: <proposal>`** — exit 6a. Set `outcome: "converged"`, `convergedProposal`. The operator then runs the normal `decide: …` for Decider; the resulting decision is linked back via `linkedDecisionId`.
+  - **`silent most-supported: <proposal> dissent: <one-liner>`** — exit 6b. Loop 2 done, no convergence. Set `outcome: "most-supported-with-dissent"`.
+  - **`silent handoff: <next stage or step>`** — exit 6c (data-gathering only). Set `outcome: "handoff"`, `handoffTo`. No Decider follows.
+  - **`silent abort: <reason>`** — set `outcome: "aborted"`. Typical reasons: reveal leaked, ran out of time, prompt was malformed.
 
 Hard rules in capture:
 
 - One pilot per decision. If the operator names two, ask which one.
 - Specific dated deadlines. Reject vague deadlines and ask for a date.
 - No collective process notes. Reject "the team should …" and ask for an anonymised pattern.
+- **No collective stickies in a Silent round.** Reject "we should …", "the team always …" and ask the operator to rephrase as a specific observation, option, or concern in the first person.
+- **At most 2 silent phases per Silent round.** If a third `silent reveal:` is attempted after a previous re-think, refuse and ask the operator to exit via 6a, 6b, or 6c.
+- **One output shape per Silent round.** If the operator tries to mix shapes mid-round, refuse and suggest opening a second `silent start:` after the first exits.
 
 The Confluence MCP is **not called** during the meeting. All writes are to the local scratchpad.
 
@@ -374,6 +433,9 @@ After a successful publish, ask one more terse question: "Anything to add before
 - **Never apply the framework to crisis meetings, podium presentations, or audiences > 15** — flag the mismatch and stop.
 - **Local-first capture, deliberate publish.** During the meeting, every capture goes to `session.json` (and the regenerated `preview.md`). Confluence is **read** before the meeting and **written** at most once at the end, on the operator's explicit go-ahead.
 - **No upfront Confluence page.** Never create the Confluence page before the meeting starts. The page is the publish artifact, populated end-to-end from the scratchpad after the meeting.
+- **Silent round reveal is simultaneous, always.** Round-robin reading aloud does not satisfy the non-anchoring property when one or more attendees have a single item. See [`silent-round.md`](silent-round.md).
+- **Silent rounds cap at 2 silent phases.** Past loop 2, exit via 6b (most-supported + flagged dissent) or 6c (handoff). Never run a third silent phase.
+- **Silent rounds promise non-anchoring, not anonymity.** Do not present them as anonymous to the team; promise that no one will hear another's answer before forming their own.
 
 ## Anti-patterns to refuse
 
@@ -396,3 +458,9 @@ After a successful publish, ask one more terse question: "Anything to add before
 - Using a whiteboard ID as `parentId` for `createConfluencePage`. Whiteboards cannot host pages — they are linked artifacts on the session page, never the parent.
 - Restricting the parent search to `type = page`. Folders are first-class containers in modern Confluence and are usually the right ritual hub; always include `type = folder` in parent-discovery CQL and surface folders first in the candidate list.
 - Listing every page in the space when asked to help with the parent. Search for ritual / ceremony hub names across pages **and** folders, present the top few, folders first.
+- Running a Silent round with round-robin reveal — the first reader anchors everyone else. Use simultaneous reveal at the Facilitator's cue, even when each attendee has only one item to contribute.
+- Using NGT-style round-robin one-item-at-a-time as the *reveal* mechanism. The optional Phase 2.5 author-explains pass is **one-shot per author**, descriptive, not persuasive — it is not the reveal.
+- Promising attendees that a Silent round is anonymous. It is not. It is non-anchoring. Frame it honestly: no one hears another's answer before forming their own.
+- Exiting a decision-bearing Silent round without Decider. Produces "great conversation, no commitment" — the failure mode the skill exists to eliminate. Either go to Decider (6a or 6b), or relabel the round as data-gathering and exit via 6c handoff and own that.
+- Using a Silent round on every decision. Adds 15–20 min per round. Reserve for judgment-heavy or anchoring-prone questions; routine commits go straight to Decider.
+- Citing the Silent round lineage (NGT, KJ method, silent brainwriting) on a session that did not invoke a Silent round. The block is only printed when at least one Silent round was captured in `session.json`.

@@ -41,11 +41,13 @@ Read the mechanics at <https://liveingreatness.com/core-protocols/> before invok
 - Use eye contact, gesture, and short prompts to bring quiet attendees in and to keep over-talkers from monopolising airtime.
 - Treat the Pacer's and Decision Driver's interventions as helpful — act on them visibly.
 - Add your own ideas occasionally, but never enough to become the main speaker.
+- When the Decision Driver invokes a **Silent round** (see [`silent-round.md`](silent-round.md)), your job changes shape inside that sequence: protect the silent phase from chatter, cue the simultaneous reveal explicitly ("reveal" — everyone posts at the same moment), and only then run the cluster (Path A) or open discussion (Path B). Anyone can Protocol Check if a sticky is shown or a number spoken before your cue.
 
 **Avoid**
 - Hogging the discussion or turning the meeting into your monologue.
 - Ignoring Pacer / Decision Driver signals.
 - Letting one or two attendees dominate while others go silent.
+- During a Silent round, accepting round-robin reading aloud as the reveal mechanism — the first reader anchors everyone. Simultaneous reveal only.
 
 **Hand-off**
 - Close cleanly: confirm the next sequence or end the meeting; cue the Process Coach for the final 10 minutes.
@@ -84,6 +86,9 @@ Read the mechanics at <https://liveingreatness.com/core-protocols/> before invok
 - **Decider** — when the team is debating a binary proposal and consensus stalls, run Decider instead of looping. Read the mechanics at the source URL before the first use.
 - **Resolution** — when Decider gets a No vote, run Resolution to converge. The two protocols are designed to be used together.
 
+**Decision-shaping protocols you can lean on (non-McCarthy)**
+- **Silent round** — when consensus is judgment-heavy, the room has a HiPPO, or there is visible expertise asymmetry on the sub-topic. Silent generation → simultaneous reveal → optional author-explains → cluster (Path A) or discuss (Path B) → optional silent re-think → Decider or handoff. Lineage: Nominal Group Technique (Delbecq, Van de Ven & Gustafson, 1971/1975) · KJ method (Kawakita, 1960s) · silent brainwriting (Rohrbach, 1968). Public-domain methodology — not a McCarthy protocol. **Read the protocol before the first use:** [`silent-round.md`](silent-round.md). It sits *before* Decider in the decision pipeline: Silent round shapes the proposal, Decider commits the team to it.
+
 ---
 
 ## Pacer
@@ -98,11 +103,13 @@ Read the mechanics at <https://liveingreatness.com/core-protocols/> before invok
 - Announce time spent / time remaining roughly **every 5 minutes** of every sequence. Example: "10 minutes used out of 20".
 - If the team runs over, keep announcing every 5 minutes ("we are now 5 minutes overtime on the 20-minute contract"). Do not press them to stop.
 - Stay neutral — your job is to make time visible, not to enforce it.
+- During a **Silent round** silent phase (see [`silent-round.md`](silent-round.md)), hold the timebox strictly — 2–5 min for the first silent phase, 2–3 min for the optional re-think. The non-anchoring property depends on a clean, undisturbed silent window; protect it from chatter and from your own announcements (do not call 5-min pings inside a 3-min silent phase).
 
 **Avoid**
 - Acting as a time cop ("hurry up!", "stop now!") — that is the team's culture issue, not yours.
 - Deciding unilaterally to extend or shrink a sequence — escalate that to the Facilitator.
 - Going silent because "they know what time it is".
+- Talking through a Silent round's silent phase. The timebox is announced at the start, the end is signalled silently or with a single brief cue.
 
 **Hand-off**
 - At the end, share a short observation with the Process Coach about which sequences blew their budget — useful input for the feed-forward round.

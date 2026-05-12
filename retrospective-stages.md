@@ -23,13 +23,24 @@ The original book is the canonical source for the framework — read it for the 
 
 ## How the three layers stack in retro mode
 
-| # | Stage | Cardon role most active | Core Protocols (McCarthy) that plug in |
-|---|-------|-------------------------|---------------------------------------|
-| 1 | Set the Stage | Facilitator | **Check In** — every attendee briefly arrives present. |
-| 2 | Gather Data | Facilitator + Pacer | Pacer holds short timeboxes. **Pass / Unpass** if anyone declines a turn. |
-| 3 | Generate Insights | Facilitator (keeps discussion balanced) | **Ask For Help**, **Intention Check** when contributions get muddy. |
-| 4 | Decide What to Do | **Decision Driver** | **Decider** for binary picks; **Resolution** after No votes. |
-| 5 | Close the Retrospective | **Process Coach** | **Perfection Game** as the feed-forward format; **Check Out** for anyone who needs it. |
+| # | Stage | Cardon role most active | Core Protocols (McCarthy) that plug in | Silent round fit? (see [`silent-round.md`](silent-round.md)) |
+|---|-------|-------------------------|---------------------------------------|-------------------|
+| 1 | Set the Stage | Facilitator | **Check In** — every attendee briefly arrives present. | — |
+| 2 | Gather Data | Facilitator + Pacer | Pacer holds short timeboxes. **Pass / Unpass** if anyone declines a turn. | **Yes — Path A** (cluster). Output shape: `ideas` / `concerns`. Exits via 6c handoff into Stage 3. |
+| 3 | Generate Insights | Facilitator (keeps discussion balanced) | **Ask For Help**, **Intention Check** when contributions get muddy. | **Yes — Path A** (cluster) on root causes / patterns; or Path B with `rate-1-5` on impact. Exits via 6c handoff into Stage 4 or via 6a if an action is already clear. |
+| 4 | Decide What to Do | **Decision Driver** | **Decider** for binary picks; **Resolution** after No votes. | **Yes — Path B** (discuss + rank) on candidate actions. Output shape: `options` or `rank-top-N`. Exits via 6a → Decider. |
+| 5 | Close the Retrospective | **Process Coach** | **Perfection Game** as the feed-forward format; **Check Out** for anyone who needs it. | — |
+
+### When to invoke a Silent round inside a retro stage
+
+A Silent round is *one* technique among many the Facilitator can choose for Stages 2 / 3 / 4. The book and community catalogues offer others (Mad Sad Glad, Timeline, 5 Whys, Dot Voting, Plus/Delta, Lean Coffee, etc.). Reach for a Silent round specifically when:
+
+- The room has a HiPPO who consistently anchors the first round of any prompt.
+- The team has previously fallen into "the first person to speak set the frame" in this recurring retro.
+- Expertise on the sub-topic is asymmetric and quieter experts have been getting drowned out.
+- The Decision Driver wants to surface independent root-cause / action candidates before letting the team converge.
+
+For routine retros where the team already participates evenly and the dominant voice problem isn't present, stick to the activities the team already knows.
 
 ## Suggested time budget (typical 60-min retro)
 
